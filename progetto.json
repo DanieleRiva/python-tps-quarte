@@ -2,13 +2,13 @@
   "slug": "sito-astro-python-guide-quarta",
   "title": "Python Guide quarta",
   "kind": "sito Astro",
-  "path": "D:\\Taylor\\sito-astro-python-guide-4ib",
+  "path": "D:\\Taylor\\python-tps-quarte",
   "status": "pronto",
   "step": "lavoro completato",
   "progress": 100,
-  "summary": "Ho aggiunto alla pagina del progetto finale il requisito della consegna su GitHub, con commit regolari e link al repository da inviare al professore.",
+  "summary": "Ho aggiornato il workflow di GitHub Pages aggiungendo la pulizia della cache npm e sostituendo l'installazione con quella basata sul file di lock, per risolvere l'errore di checksum durante la build.",
   "created": "2026-11-16T20:14:28",
-  "updated": "2026-11-17T00:31:12",
+  "updated": "2026-11-17T00:54:40",
   "requests": [
     {
       "quando": "2026-11-16T20:14:28",
@@ -77,25 +77,13 @@
     {
       "quando": "2026-11-17T00:30:36",
       "istruzioni": "Aggiungi nella pagina del progetto finale un requisito sulla consegna tramite GitHub: ogni studente deve creare un repository GitHub dedicato a questo progetto. Durante lo sviluppo deve fare commit regolari a ogni modifica significativa (non una sola commit finale). Alla consegna il repository deve contenere: tutto il codice del progetto e il file PowerPoint di presentazione. Il link al repository va consegnato al professore."
+    },
+    {
+      "quando": "2026-11-17T00:54:28",
+      "istruzioni": "Nel file del workflow GitHub Pages (nella cartella .github/workflows/), aggiungi un passaggio di pulizia della cache npm prima del npm install: `npm cache clean --force`. In alternativa, se c'è il package-lock.json nel progetto, sostituisci npm install con npm ci. L'obiettivo è risolvere l'errore EINTEGRITY sul pacchetto mdast-util-definitions che fallisce il controllo del checksum sha512 durante la build su GitHub Actions."
     }
   ],
   "log": [
-    {
-      "quando": "2026-11-16T20:14:32",
-      "azione": "pianifico il lavoro"
-    },
-    {
-      "quando": "2026-11-16T20:14:38",
-      "azione": "controllo i file"
-    },
-    {
-      "quando": "2026-11-16T20:14:38",
-      "azione": "controllo i file"
-    },
-    {
-      "quando": "2026-11-16T20:14:39",
-      "azione": "controllo i file"
-    },
     {
       "quando": "2026-11-16T20:14:39",
       "azione": "trova progetto template \"appunti terze\""
@@ -878,6 +866,22 @@
     },
     {
       "quando": "2026-11-17T00:31:12",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-17T00:54:28",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:54:32",
+      "azione": "leggo deploy.yml"
+    },
+    {
+      "quando": "2026-11-17T00:54:37",
+      "azione": "modifico deploy.yml"
+    },
+    {
+      "quando": "2026-11-17T00:54:40",
       "azione": "lavoro completato"
     }
   ]
