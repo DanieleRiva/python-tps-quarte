@@ -6,9 +6,9 @@
   "status": "pronto",
   "step": "lavoro completato",
   "progress": 100,
-  "summary": "Ho aggiornato il workflow di GitHub Pages aggiungendo la pulizia della cache npm e sostituendo l'installazione con quella basata sul file di lock, per risolvere l'errore di checksum durante la build.",
+  "summary": "Ho modificato il workflow sostituendo il comando di installazione stretto con quello normale, così la build non si blocca più sul controllo del file di lock.",
   "created": "2026-11-16T20:14:28",
-  "updated": "2026-11-17T00:54:40",
+  "updated": "2026-11-17T00:58:37",
   "requests": [
     {
       "quando": "2026-11-16T20:14:28",
@@ -81,25 +81,13 @@
     {
       "quando": "2026-11-17T00:54:28",
       "istruzioni": "Nel file del workflow GitHub Pages (nella cartella .github/workflows/), aggiungi un passaggio di pulizia della cache npm prima del npm install: `npm cache clean --force`. In alternativa, se c'è il package-lock.json nel progetto, sostituisci npm install con npm ci. L'obiettivo è risolvere l'errore EINTEGRITY sul pacchetto mdast-util-definitions che fallisce il controllo del checksum sha512 durante la build su GitHub Actions."
+    },
+    {
+      "quando": "2026-11-17T00:58:28",
+      "istruzioni": "Nel file del workflow GitHub Pages (.github/workflows/), sostituisci il comando `npm ci` con `npm install`. Il problema è che il package-lock.json nel repo contiene un hash corrotto per il pacchetto mdast-util-definitions@6.0.0, e npm ci lo legge in modo stretto fallendo sempre. Con npm install il controllo del lock file non è vincolante e la build dovrebbe andare a buon fine."
     }
   ],
   "log": [
-    {
-      "quando": "2026-11-16T20:14:39",
-      "azione": "trova progetto template \"appunti terze\""
-    },
-    {
-      "quando": "2026-11-16T20:15:00",
-      "azione": "controllo i file"
-    },
-    {
-      "quando": "2026-11-16T20:15:12",
-      "azione": "controllo i file"
-    },
-    {
-      "quando": "2026-11-16T20:15:24",
-      "azione": "controllo i file"
-    },
     {
       "quando": "2026-11-16T20:15:37",
       "azione": "controllo i file"
@@ -882,6 +870,22 @@
     },
     {
       "quando": "2026-11-17T00:54:40",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-17T00:58:28",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:58:32",
+      "azione": "leggo deploy.yml"
+    },
+    {
+      "quando": "2026-11-17T00:58:34",
+      "azione": "modifico deploy.yml"
+    },
+    {
+      "quando": "2026-11-17T00:58:37",
       "azione": "lavoro completato"
     }
   ]
