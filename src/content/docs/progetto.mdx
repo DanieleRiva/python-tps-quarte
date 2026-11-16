@@ -1,0 +1,169 @@
+---
+title: Progetto finale
+description: Specifiche del progetto di fine periodo per la classe quarta - applicazione originale in tkinter, requisiti tecnici, presentazione PowerPoint ed esposizione orale.
+sidebar:
+  order: 11
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+## In breve
+
+Devi realizzare, **individualmente**, un'**applicazione Python originale**, **pensata e progettata da te**, che:
+
+1. abbia un'**interfaccia grafica** realizzata con **tkinter** (vedi [Interfacce grafiche con tkinter](/librerie-ui/)); in alternativa è accettato anche `customtkinter`, che è una semplice estensione estetica di tkinter;
+2. **interagisca obbligatoriamente con almeno un file** (lettura e/o scrittura);
+3. venga accompagnata da una **presentazione in PowerPoint**;
+4. venga **esposta a voce** durante un colloquio individuale.
+
+<Aside type="caution" title="Deve essere un'idea tua">
+Il progetto **non** può essere la copia, la rielaborazione o il "rifacimento con un altro nome" degli esempi visti a lezione (come la rubrica o i piccoli programmi di prova). Deve essere qualcosa di **inventato da te**: un piccolo gioco, un'app di utilità, uno strumento che ti piacerebbe davvero usare. Se durante l'esposizione risulta evidente che hai solo riciclato un esempio del corso, il progetto viene considerato non consegnato.
+</Aside>
+
+<Aside type="note" title="Scadenze">
+Le scadenze precise (consegna del codice + PowerPoint, data dell'esposizione) vengono comunicate in classe e aggiornate sul registro. La consegna va fatta **in anticipo** rispetto alla data dell'esposizione.
+</Aside>
+
+## Che tipo di applicazione fare
+
+Deve essere un'idea **tua**, nata da un tuo interesse. Qualche categoria entro cui orientarti:
+
+- un **piccolo gioco** (puzzle, indovinelli, gioco a turni, memory tematico, quiz personalizzato...);
+- un'**app di utilità** che risolve un problema concreto che hai tu (gestione allenamenti, registro spese personali, promemoria compiti, tracker di abitudini...);
+- uno **strumento creativo** (generatore di idee, disegno su canvas, editor di liste, mini-diario...);
+- qualcosa che hai **sempre voluto provare a fare** e che rientri nelle tue possibilità.
+
+Non c'è una lista chiusa di idee ammesse: **l'originalità è parte della valutazione**. Se hai dubbi sul fatto che un'idea sia troppo simile a un esempio visto in classe, chiedi prima di iniziare.
+
+## Requisiti tecnici obbligatori
+
+L'applicazione deve usare in modo evidente **tutti** questi elementi:
+
+- **variabili** di tipi diversi e **operatori**;
+- **strutture di controllo** (`if`, almeno un ciclo `for` o `while`);
+- **funzioni** definite da te, con parametri e `return`;
+- almeno una **struttura dati** complessa (lista, dizionario, set o tupla usati in modo non banale);
+- un'**interfaccia grafica** in **tkinter** (o `customtkinter`), con più widget e un layout curato;
+- **lettura e/o scrittura di almeno un file** (testo, CSV, JSON, o altro formato adatto): ad esempio per salvare lo stato dell'app, caricare dati, tenere traccia del punteggio, importare un elenco... **Questo requisito non è opzionale**: un progetto che non tocca nessun file non viene accettato.
+
+### Librerie esterne: sei libero di esplorare
+
+Oltre alle librerie standard (`os`, `math`, `random`, `datetime`, `json`...) **puoi usare librerie Python esterne anche se non le abbiamo viste a lezione**: se hai trovato qualcosa di interessante curiosando in rete (ad esempio `pillow` per le immagini, `pygame` per il suono, `requests` per prendere dati da internet, `pandas` per i dati, ecc.) usala pure.
+
+Ricorda però che:
+
+- devi **capire davvero** cosa fa ogni libreria che includi: all'orale ti verrà chiesto;
+- ogni libreria esterna va messa nel `requirements.txt`;
+- se la libreria fa il 90% del lavoro al posto tuo, il progetto perde di senso.
+
+### Consigliato (non obbligatorio)
+
+- **gestione delle eccezioni** con messaggi chiari all'utente;
+- **separazione** tra logica di dominio e interfaccia (funzioni o file separati);
+- piccoli tocchi di cura sull'interfaccia (colori coerenti, spaziature, messaggi di aiuto).
+
+## Uso dell'intelligenza artificiale: come supporto, non come autore
+
+<Aside type="caution" title="L'AI può aiutarti, non sostituirti">
+L'AI (ChatGPT, Copilot, Claude, Gemini e simili) è **consentita come supporto puntuale** durante il lavoro. Puoi usarla per:
+
+- **farti spiegare un concetto** che non ti è chiaro (es. "cosa fa `strip()` su una stringa?");
+- chiedere uno **snippet di codice su una parte specifica** (es. "come apro un file in append in Python?");
+- ricevere un **consiglio** su come strutturare una piccola porzione del programma o capire perché un errore compare.
+
+**Non è consentito**, invece, usarla per **generare intere funzionalità o il progetto nel suo complesso**: prompt del tipo *"fammi questa funzione che fa X, Y e Z"*, *"scrivimi la finestra di login"*, *"scrivi il progetto"* sono fuori dalle regole.
+
+Il codice deve essere **prevalentemente scritto da te**, e **devi capire ogni singola parte** di quello che consegni - anche l'eventuale riga o pezzetto suggerito dall'AI. Se incolli qualcosa senza capirlo, non è più tuo.
+</Aside>
+
+Perché questo confine è importante:
+
+- il valore del progetto sta nel **percorso che fai scrivendolo**: se lo deleghi all'AI, salti la parte che conta;
+- all'**esposizione orale** ti verranno fatte domande specifiche su parti del codice: un uso **superficiale o delegato** dell'AI diventa subito evidente perché non sai motivare le scelte, i nomi, la struttura;
+- potresti dover **modificare a caldo** un pezzo del programma, durante la presentazione: se hai davvero capito il codice lo sai fare, altrimenti ti blocchi.
+
+In sintesi: l'AI va usata come useresti un **professore più esperto** a cui chiedi un chiarimento o un consiglio, non come un **ghostwriter** a cui fai scrivere il compito. Chi consegna un progetto che si rivela, all'orale, non compreso dallo studente, riceve il progetto **non valutato** e deve rifarlo con un'altra traccia.
+
+## Cosa consegnare
+
+Nella cartella del progetto deve esserci:
+
+- il **codice sorgente** completo, in più file se necessario;
+- un file `requirements.txt` con le librerie esterne usate (generato con `pip freeze > requirements.txt`, vedi [pip e requirements](/pip/));
+- un file `README.md` con:
+  - titolo del progetto e una frase di descrizione,
+  - **come installarlo** (`pip install -r requirements.txt`) e **come lanciarlo** (`python main.py`),
+  - il nome dei **file** letti o scritti dall'app e dove vengono salvati,
+  - uno **screenshot** dell'applicazione in funzione;
+- una **presentazione in PowerPoint** (`.pptx`) - vedi sotto.
+
+### La presentazione PowerPoint
+
+Il file `.pptx` deve **dimostrare che hai fatto il progetto attivamente**. Non deve essere lungo né pieno di animazioni: deve essere **chiaro** e **tuo**. Deve contenere, come minimo:
+
+1. **Descrizione dell'applicazione**: cosa fa, a chi serve, perché hai scelto questa idea;
+2. **I componenti principali**: schermate dell'app con una breve didascalia di cosa si vede e cosa succede cliccando;
+3. **Pezzi di codice spiegati**: screenshot (o riquadri con il codice) delle parti più importanti - almeno una funzione tua, la parte che gestisce i file, un pezzo di interfaccia - con **le tue parole** che spiegano riga per riga cosa fa;
+4. **Librerie usate e perché**: elenco delle librerie (standard ed esterne) con una riga su a cosa ti sono servite;
+5. **Cosa hai fatto e come**: il percorso che hai seguito (prima ho pensato a..., poi ho scritto..., poi ho aggiunto...);
+6. **Le difficoltà maggiori**: due o tre cose su cui ti sei bloccato davvero, e come ne sei uscito;
+7. **Le cose che pensavi fossero difficili e invece no**: dove ti aspettavi uno scoglio e non c'era;
+8. **Cosa ti è piaciuto di più** del progetto.
+
+Lo scopo del PowerPoint **non** è essere bello graficamente: è farmi capire che il progetto l'hai costruito tu, un pezzo alla volta.
+
+### Consegna tramite GitHub
+
+La consegna del progetto avviene attraverso un **repository GitHub dedicato**, che crei tu e mantieni aggiornato mentre lavori.
+
+- **Crea un repository apposito** per questo progetto (uno diverso per ogni studente, con un nome chiaro - es. `progetto-python-quarta`). Può essere pubblico o privato: se lo tieni privato, aggiungimi come collaboratore.
+- **Fai commit regolari**: ogni volta che aggiungi una funzionalità, sistemi un bug o fai una modifica significativa, fai un commit con un messaggio che descriva **cosa hai cambiato** (es. `"aggiunta finestra login"`, `"salvataggio punteggio su file"`, `"fix: pulsante reset non funzionava"`). **Non è accettata una sola commit finale** con tutto il progetto caricato in blocco: la cronologia dei commit deve raccontare il percorso di sviluppo.
+- Alla **consegna**, il repository deve contenere:
+  - tutto il **codice** del progetto (`.py`, `requirements.txt`, `README.md`, eventuali file dati di esempio);
+  - il **file PowerPoint** di presentazione (`.pptx`).
+
+<Aside type="tip" title="Perché i commit frequenti">
+La cronologia dei commit è una **prova concreta** che il progetto l'hai fatto tu, un passo alla volta. Un repository con decine di commit piccoli e descrittivi racconta un percorso reale di lavoro; un repository con un solo commit *"progetto"* no. Durante l'orale posso anche guardare lo storico insieme a te.
+</Aside>
+
+<Aside type="caution" title="Evita queste cose">
+- **Non** copiare un progetto trovato online: puoi ispirarti, non duplicare.
+- **Non** mettere codice che non sapresti rispiegare a voce.
+- **Non** usare l'AI per generare intere funzioni o il progetto in blocco: può aiutarti su pezzi puntuali, ma il codice deve essere tuo (vedi sopra).
+- **Non** lasciare commenti `TODO` o parti non funzionanti nell'app consegnata.
+- **Non** trasformare il PowerPoint in una gallery di copia-incolla senza commento tuo.
+</Aside>
+
+## Modalità di esposizione
+
+L'esposizione è **individuale**, **orale**, e si articola in:
+
+1. **Demo** dell'applicazione
+2. **Presentazione con il PowerPoint**
+3. **Spiegazione del codice**
+4. **Domande**
+
+Durante l'esposizione:
+
+- parla **sempre tu**, non leggere a memoria;
+- usa il **lessico corretto** (variabile, parametro, funzione, argomento, eccezione, widget);
+- se ti blocchi su una domanda tecnica specifica puoi guardare il codice: non è una gara di memoria, è una verifica che **tu abbia scritto davvero quello che consegni**.
+
+<Aside type="tip" title="Perché l'orale è così importante">
+L'esposizione non è una formalità: è **la parte principale** della valutazione. Puoi avere un'app bellissima, ma se all'orale si vede che non sai di cosa parli, il progetto non è tuo. Al contrario, un progetto più modesto spiegato con sicurezza e consapevolezza vale molto.
+</Aside>
+
+## Checklist finale prima della consegna
+
+- [ ] L'idea del progetto è **mia**, non è la copia di un esempio visto a lezione.
+- [ ] L'app parte con un singolo comando (`python main.py`).
+- [ ] L'app **legge e/o scrive almeno un file** e il file viene gestito correttamente (anche quando non esiste ancora).
+- [ ] Ho scritto `requirements.txt` e il `README.md`.
+- [ ] Ho preparato la **presentazione in PowerPoint** con tutti i punti richiesti.
+- [ ] Il mio codice è **scritto da me**, e **capisco ogni parte** di quello che consegno (anche gli eventuali snippet puntuali in cui mi sono fatto aiutare dall'AI).
+- [ ] So **rispiegare a voce** ogni funzione del mio codice.
+- [ ] So **in che punto del codice** sta ciascun requisito richiesto.
+- [ ] I nomi di variabili e funzioni sono significativi.
+- [ ] Ho un **repository GitHub** dedicato al progetto, con **commit regolari** che raccontano lo sviluppo.
+- [ ] Nel repository ci sono **tutto il codice** e il **file PowerPoint** di presentazione.
+- [ ] Sono pronto a **modificare** piccole parti del codice durante l'orale.

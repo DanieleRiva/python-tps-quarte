@@ -1,0 +1,109 @@
+/* =========================================
+   TEMA SCURO (Default) - palette Python
+   ========================================= */
+:root,
+:root[data-theme='dark'] {
+    --sl-color-accent: #ffd43b !important; /* Giallo Python */
+    --sl-color-accent-high: #ffffff !important;
+    --sl-color-accent-low: #3a3200 !important;
+
+    --sl-color-bg: #0b1221 !important;         /* Blu Python scurissimo */
+    --sl-color-bg-nav: #0f1a30 !important;
+    --sl-color-bg-sidebar: #0f1a30 !important;
+}
+
+/* =========================================
+   TEMA CHIARO - palette Python
+   ========================================= */
+:root[data-theme='light'] {
+    --sl-color-accent: #306998 !important;      /* Blu Python */
+    --sl-color-accent-high: #1b4367 !important;
+    --sl-color-accent-low: #e6eef6 !important;
+
+    --sl-color-bg: #fbfbfd !important;
+    --sl-color-bg-nav: #f1f4fa !important;
+    --sl-color-bg-sidebar: #f1f4fa !important;
+}
+
+/* =========================================
+   FORZATURA STRUTTURALE (Fix per Tema Nova)
+   ========================================= */
+#starlight__sidebar,
+#starlight__sidebar .sidebar-content,
+#starlight__sidebar .nova-scroll-container {
+    background-color: var(--sl-color-bg-sidebar) !important;
+}
+
+header.header,
+.header.nova-header {
+    background-color: var(--sl-color-bg-nav) !important;
+}
+
+/* =========================================
+   PROGRESS BAR
+   ========================================= */
+#scroll-progress {
+    background-color: var(--sl-color-accent) !important;
+    box-shadow: 0 0 12px var(--sl-color-accent) !important;
+}
+
+/* =========================================
+   RITOCCHI TIPOGRAFICI
+   ========================================= */
+.sl-markdown-content h2 {
+    border-bottom: 1px solid var(--sl-color-hairline);
+    padding-bottom: 0.3rem;
+}
+
+.sl-markdown-content code:not(pre code) {
+    background-color: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    padding: 0.08rem 0.35rem;
+    border-radius: 0.3rem;
+    font-size: 0.92em;
+}
+
+/* =========================================
+   TABELLE
+   ========================================= */
+.sl-markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: 0.95em;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-hairline);
+    background-color: var(--sl-color-bg-nav);
+}
+
+.sl-markdown-content table thead {
+    background-color: var(--sl-color-accent-low);
+}
+
+.sl-markdown-content table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--sl-color-accent-high);
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.sl-markdown-content table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    vertical-align: top;
+}
+
+.sl-markdown-content table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.sl-markdown-content table tbody tr:hover {
+    background-color: var(--sl-color-accent-low);
+}
+
+.sl-markdown-content table th.center,
+.sl-markdown-content table td.center {
+    text-align: center;
+}

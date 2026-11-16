@@ -1,0 +1,152 @@
+---
+title: Cicli
+description: for, while, range(), enumerate, break, continue e la clausola else dei cicli. Come ripetere operazioni in modo controllato.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## `for`: iterare su una sequenza
+
+Il `for` in Python **scorre** una sequenza (lista, tuple, stringa, dizionario, file, generatore...) senza bisogno di un indice.
+
+```python
+voti = [8, 7, 9, 6, 10]
+
+for v in voti:
+    print(v)
+```
+
+### `range()`: contare
+
+Per ripetere qualcosa *n* volte, o per numeri in progressione, usa `range`:
+
+```python
+for i in range(5):           # 0, 1, 2, 3, 4
+    print(i)
+
+for i in range(1, 11):       # da 1 a 10
+    print(i)
+
+for i in range(0, 20, 2):    # 0, 2, 4, ..., 18
+    print(i)
+
+for i in range(10, 0, -1):   # countdown: 10, 9, ..., 1
+    print(i)
+```
+
+### Avere indice **e** valore: `enumerate`
+
+```python
+voti = [8, 7, 9, 6, 10]
+
+for indice, voto in enumerate(voti, start=1):
+    print(f"Voto {indice}: {voto}")
+```
+
+### Iterare un dizionario
+
+```python
+studente = {"nome": "Luca", "eta": 17, "classe": "quarta"}
+
+for chiave, valore in studente.items():
+    print(f"{chiave} → {valore}")
+```
+
+## `while`: ripetere finché una condizione è vera
+
+Usa `while` quando **non sai quante iterazioni servono** in anticipo.
+
+```python
+numero = 0
+
+while numero < 1 or numero > 10:
+    numero = int(input("Scrivi un numero tra 1 e 10: "))
+
+print(f"Hai scritto {numero}.")
+```
+
+<Aside type="caution" title="Attenzione ai loop infiniti">
+In un `while`, se la condizione non diventa mai falsa, il programma non termina. Verifica sempre che qualcosa **modifichi** le variabili coinvolte. In emergenza interrompi con `Ctrl+C`.
+</Aside>
+
+## `break` e `continue`
+
+- `break` esce immediatamente dal ciclo.
+- `continue` salta all'iterazione successiva.
+
+```python
+# Cerca il primo multiplo di 7 maggiore di 50
+for n in range(51, 100):
+    if n % 7 == 0:
+        print(f"Trovato: {n}")
+        break
+
+# Stampa solo i voti sufficienti
+voti = [4, 8, 5, 7, 9, 3, 6]
+for v in voti:
+    if v < 6:
+        continue
+    print(v)
+```
+
+## La clausola `else` sui cicli
+
+Un `for` o un `while` possono avere un ramo `else`, eseguito **solo se il ciclo è terminato in modo naturale** (senza `break`). È utile nelle ricerche:
+
+```python
+numeri = [2, 4, 6, 8, 10]
+cercato = 7
+
+for n in numeri:
+    if n == cercato:
+        print("Trovato!")
+        break
+else:
+    print(f"{cercato} non è presente.")
+```
+
+## Cicli annidati
+
+```python
+# Tavola pitagorica (1..5)
+for i in range(1, 6):
+    riga = ""
+    for j in range(1, 6):
+        riga += f"{i * j:4d}"
+    print(riga)
+```
+
+## Esempio completo · gioco "indovina il numero"
+
+```python
+import random
+
+segreto = random.randint(1, 100)
+tentativi = 0
+
+while True:
+    tentativi += 1
+    testo = input(f"Tentativo {tentativi} - scrivi un numero (1-100): ").strip()
+
+    if not testo.isdigit():
+        print("Devi inserire solo cifre.")
+        continue
+
+    n = int(testo)
+
+    if n == segreto:
+        print(f"Bravo! Hai indovinato in {tentativi} tentativi.")
+        break
+    elif n < segreto:
+        print("Troppo basso.")
+    else:
+        print("Troppo alto.")
+```
+
+## Da provare
+
+- Aggiungi un limite di **10 tentativi** al gioco.
+- Scrivi un ciclo che calcola il **fattoriale** di un numero senza usare `math.factorial`.
+- Stampa in colonna solo i numeri da 1 a 100 **divisibili per 3 o 5** (è il classico *FizzBuzz*, in versione minima).

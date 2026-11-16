@@ -1,0 +1,174 @@
+---
+title: Canvas - area di disegno
+description: Guida al widget Canvas di tkinter - disegnare rettangoli, cerchi, linee, testo, immagini, muovere forme, rilevare click.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Canvas` è una **tela** su cui disegnare: linee, rettangoli, cerchi, poligoni, testo, immagini. È la base per **mini-giochi**, **grafici** fatti a mano, **diagrammi** interattivi e **animazioni** semplici.
+
+<Aside type="note" title="Quando usarlo">
+- Per disegnare figure geometriche o grafici custom.
+- Per **mini-giochi 2D** (pong, snake, spaceship).
+- Per visualizzare dati in modo originale.
+- Per creare **mappe cliccabili** o schemi con elementi trascinabili.
+</Aside>
+
+## Sistema di coordinate
+
+Il Canvas usa coordinate in **pixel** con l'origine `(0, 0)` nell'**angolo in alto a sinistra**. L'asse X va a destra, l'asse Y va **verso il basso**.
+
+## Metodi di disegno
+
+| Metodo | Cosa disegna |
+|---|---|
+| `create_line(x1, y1, x2, y2, …)` | Una linea tra due o più punti. |
+| `create_rectangle(x1, y1, x2, y2)` | Un rettangolo dagli angoli opposti. |
+| `create_oval(x1, y1, x2, y2)` | Un'ellisse inscritta nel rettangolo (se lati uguali → cerchio). |
+| `create_polygon(x1, y1, x2, y2, …)` | Un poligono chiuso. |
+| `create_arc(x1, y1, x2, y2, start, extent)` | Un arco o uno spicchio. |
+| `create_text(x, y, text="…")` | Testo centrato in `(x, y)`. |
+| `create_image(x, y, image=…)` | Un'immagine (`PhotoImage`). |
+
+Opzioni comuni a tutti i disegni: `fill` (colore di riempimento), `outline` (colore del bordo), `width` (spessore del bordo), `tags` (etichetta per raggruppare).
+
+## Metodi utili
+
+| Metodo | Cosa fa |
+|---|---|
+| `move(id, dx, dy)` | Sposta una forma di `dx` pixel in orizzontale e `dy` in verticale. |
+| `coords(id, x1, y1, …)` | Ridisegna una forma in nuove coordinate (se omesse, le restituisce). |
+| `itemconfig(id, …)` | Cambia colore, bordo, testo di una forma già disegnata. |
+| `delete(id)` o `delete("tag")` | Rimuove una forma. `delete("all")` pulisce tutta la tela. |
+| `bbox(id)` | Restituisce `(x1, y1, x2, y2)` con il riquadro contenente la forma. |
+
+## Esempio 1 · Forme base
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+tela = tk.Canvas(finestra, width=400, height=250, bg="white")
+tela.pack(padx=10, pady=10)
+
+tela.create_rectangle(20, 20, 150, 120, fill="tomato", outline="black", width=2)
+tela.create_oval(170, 20, 290, 140, fill="dodgerblue")
+tela.create_line(20, 180, 380, 180, width=3, fill="gray")
+tela.create_polygon(310, 30, 380, 90, 310, 150, fill="gold", outline="black")
+tela.create_text(200, 210, text="La mia tela", font=("Arial", 14, "bold"))
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Spostare una forma
+
+Ogni `create_...` restituisce un **id** numerico. Lo usi per muovere o modificare la forma in seguito.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+tela = tk.Canvas(finestra, width=300, height=200, bg="white")
+tela.pack()
+
+pallina = tela.create_oval(20, 80, 60, 120, fill="dodgerblue")
+
+
+def muovi(dx, dy):
+    tela.move(pallina, dx, dy)
+
+
+tk.Button(finestra, text="←", command=lambda: muovi(-10, 0)).pack(side="left")
+tk.Button(finestra, text="→", command=lambda: muovi(10, 0)).pack(side="left")
+tk.Button(finestra, text="↑", command=lambda: muovi(0, -10)).pack(side="left")
+tk.Button(finestra, text="↓", command=lambda: muovi(0, 10)).pack(side="left")
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Disegnare al passaggio del mouse
+
+Con `bind` sul canvas intercetti i movimenti del mouse: puoi fare un **mini-paint**.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.title("Disegno libero")
+tela = tk.Canvas(finestra, width=400, height=300, bg="white")
+tela.pack()
+
+
+def disegna(evento):
+    x, y = evento.x, evento.y
+    tela.create_oval(x - 3, y - 3, x + 3, y + 3, fill="black", outline="")
+
+
+tela.bind("<B1-Motion>", disegna)   # trascinamento con tasto sinistro
+tk.Button(finestra, text="Pulisci",
+          command=lambda: tela.delete("all")).pack(pady=5)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Animazione con `after`
+
+`after(ms, funzione)` chiama una funzione dopo tot millisecondi. Ripetendolo si ottiene un'animazione.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+tela = tk.Canvas(finestra, width=400, height=200, bg="white")
+tela.pack()
+
+pallina = tela.create_oval(20, 80, 60, 120, fill="tomato")
+dx = 4
+
+
+def anima():
+    global dx
+    tela.move(pallina, dx, 0)
+    x1, _, x2, _ = tela.coords(pallina)
+    if x2 >= 400 or x1 <= 0:
+        dx = -dx            # inverte direzione ai bordi
+    finestra.after(30, anima)
+
+
+anima()
+finestra.mainloop()
+```
+
+## Esempio 5 · Click su una forma
+
+Puoi collegare un evento **direttamente a una forma** usando `tag_bind` e un tag personale.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+tela = tk.Canvas(finestra, width=300, height=200, bg="white")
+tela.pack()
+
+tela.create_oval(50, 50, 150, 150, fill="gold", tags="moneta")
+
+
+def raccogli(evento):
+    tela.delete("moneta")
+    tela.create_text(150, 100, text="Hai preso la moneta!",
+                     font=("Arial", 12, "bold"))
+
+
+tela.tag_bind("moneta", "<Button-1>", raccogli)
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **Non si vede niente**: hai disegnato prima di chiamare `.pack()` (va bene comunque) ma forse hai usato un `bg` uguale al colore della forma, oppure le coordinate sono fuori dall'area.
+- **Il cerchio è un'ellisse**: in `create_oval` i due lati del rettangolo devono essere **uguali** per ottenere un cerchio perfetto.
+- **L'animazione va a scatti**: `after` troppo lungo o movimenti troppo grandi. Prova `after(16, ...)` (circa 60 fps) con spostamenti più piccoli.
+- **L'immagine sparisce**: come con `Label`, devi mantenere un **riferimento** al `PhotoImage`, altrimenti Python lo scarta.

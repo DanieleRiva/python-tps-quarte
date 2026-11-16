@@ -1,0 +1,156 @@
+---
+title: Checkbutton - caselle a crocetta
+description: Guida al widget Checkbutton di tkinter - BooleanVar, valori on/off personalizzati, più caselle con lo stesso gestore.
+sidebar:
+  order: 7
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il `Checkbutton` è la classica **casella a crocetta**: può essere spuntata o no, e rappresenta una scelta **sì/no** indipendente. A differenza del [Radiobutton](/tkinter/radiobutton/), più checkbutton possono essere spuntati contemporaneamente.
+
+<Aside type="note" title="Quando usarlo">
+- Per **opzioni indipendenti**: "Ricorda password", "Notifiche attive", "Avvio automatico".
+- Per **liste di preferenze** in cui si può scegliere più di un elemento.
+- Per **confermare** di aver letto qualcosa prima di continuare.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `text` | Etichetta mostrata accanto alla casella. |
+| `variable` | `BooleanVar` o `IntVar` che riceve lo stato on/off. |
+| `onvalue`, `offvalue` | Valori personalizzati (default `1` e `0` con `IntVar`; `True`/`False` con `BooleanVar`). |
+| `command` | Funzione chiamata ogni volta che lo stato cambia. |
+| `font`, `fg`, `bg` | Carattere e colori. |
+| `state` | `"normal"` o `"disabled"`. |
+
+## Metodi utili
+
+| Metodo | Cosa fa |
+|---|---|
+| `.select()` | Mette la crocetta. |
+| `.deselect()` | Toglie la crocetta. |
+| `.toggle()` | Inverte lo stato. |
+
+## Esempio 1 · Un'unica scelta sì/no
+
+```python
+import tkinter as tk
+
+
+def stampa_stato():
+    print("Notifiche attive?", scelta.get())
+
+
+finestra = tk.Tk()
+finestra.geometry("280x120")
+
+scelta = tk.BooleanVar(value=False)
+
+tk.Checkbutton(
+    finestra,
+    text="Notifiche attive",
+    variable=scelta,
+    command=stampa_stato,
+).pack(pady=20)
+
+tk.Button(finestra, text="Chiudi", command=finestra.destroy).pack()
+
+finestra.mainloop()
+```
+
+`scelta.get()` restituisce `True` o `False`.
+
+## Esempio 2 · Lista di preferenze
+
+```python
+import tkinter as tk
+from tkinter import messagebox
+
+opzioni = ["Pepperoni", "Funghi", "Olive", "Cipolla", "Peperoni"]
+
+
+def mostra_scelte():
+    scelti = [nome for nome, var in stati.items() if var.get()]
+    if not scelti:
+        messagebox.showinfo("Pizza", "Nessun ingrediente scelto.")
+    else:
+        messagebox.showinfo("Pizza", "Ingredienti: " + ", ".join(scelti))
+
+
+finestra = tk.Tk()
+finestra.title("Pizza personalizzata")
+finestra.geometry("260x230")
+
+stati = {}
+for nome in opzioni:
+    var = tk.BooleanVar()
+    tk.Checkbutton(finestra, text=nome, variable=var).pack(anchor="w", padx=20)
+    stati[nome] = var
+
+tk.Button(finestra, text="Conferma", command=mostra_scelte).pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Abilitare un campo solo se la casella è spuntata
+
+```python
+import tkinter as tk
+
+
+def cambia_stato():
+    if accetta.get():
+        bottone.config(state="normal")
+    else:
+        bottone.config(state="disabled")
+
+
+finestra = tk.Tk()
+finestra.geometry("320x160")
+
+accetta = tk.BooleanVar()
+
+tk.Checkbutton(
+    finestra,
+    text="Accetto i termini e le condizioni",
+    variable=accetta,
+    command=cambia_stato,
+).pack(pady=20)
+
+bottone = tk.Button(finestra, text="Continua", state="disabled")
+bottone.pack()
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Valori on/off personalizzati
+
+Puoi scegliere **quali valori** la variabile assume quando la casella è spuntata o no.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+lingua = tk.StringVar(value="it")
+
+tk.Checkbutton(
+    finestra,
+    text="Interfaccia in inglese",
+    variable=lingua,
+    onvalue="en",
+    offvalue="it",
+    command=lambda: print("Lingua corrente:", lingua.get()),
+).pack(padx=20, pady=20)
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **`get()` restituisce `0` o `1`** invece di `True`/`False`: hai usato `IntVar` invece di `BooleanVar`. Entrambi funzionano, ma scegline uno e sii coerente.
+- **La crocetta parte attiva**: hai dato `value=True` alla variabile. Lascia `value=False` oppure chiama `.deselect()` dopo la creazione.
+- **Il `command` non si attiva all'avvio**: giusto così. Si attiva solo quando lo stato **cambia**.

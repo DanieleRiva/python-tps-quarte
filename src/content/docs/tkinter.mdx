@@ -1,0 +1,411 @@
+---
+title: Interfacce grafiche con tkinter
+description: Guida approfondita a tkinter - widget, layout manager, eventi, finestre figlie, messaggi di dialogo. In appendice customtkinter per un aspetto moderno.
+sidebar:
+  order: 10
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Per il **progetto finale** devi costruire un'applicazione con **interfaccia grafica**: niente programmi solo a riga di comando. La libreria accettata è **tkinter**, inclusa in ogni installazione standard di Python: non devi installare nulla.
+
+In appendice trovi anche **customtkinter**, che estende tkinter con un aspetto moderno (tema scuro, pulsanti arrotondati) ed è opzionale.
+
+<Aside type="note" title="Perché tkinter">
+- È **già installata** con Python: zero setup, funziona ovunque.
+- La sintassi è **semplice** e non richiede necessariamente classi: puoi scrivere interfacce in stile procedurale.
+- È sufficiente per **tutti i progetti** della classe quarta: rubriche, quiz, agende, mini-giochi, convertitori.
+</Aside>
+
+## 1 · Prima finestra
+
+Ogni programma tkinter parte sempre dagli stessi tre passi: creo la finestra principale, aggiungo i widget, avvio il **ciclo degli eventi** con `mainloop()`.
+
+```python
+# finestra_base.py - la finestra più semplice possibile
+import tkinter as tk
+
+finestra = tk.Tk()                 # 1. creo la finestra principale
+finestra.title("Prima finestra")   # 2. imposto il titolo
+finestra.geometry("360x200")       # 3. larghezza x altezza in pixel
+
+tk.Label(finestra, text="Ciao, tkinter!").pack(pady=40)
+
+finestra.mainloop()                # 4. avvio il ciclo degli eventi
+```
+
+<Aside type="caution" title="Attenzione a mainloop()">
+`mainloop()` blocca il programma e resta in ascolto di click, tasti e altri eventi: **tutto il codice dopo** `mainloop()` verrà eseguito solo quando la finestra viene chiusa.
+</Aside>
+
+## 2 · I widget di base
+
+Un **widget** è un elemento dell'interfaccia: un'etichetta, un pulsante, un campo di testo. In tkinter ogni widget si crea con una classe (`tk.Label`, `tk.Button`, …) passando come primo argomento il "contenitore" (la finestra o un `Frame`).
+
+Nelle pagine dedicate trovi una **guida approfondita** per ogni widget con tutte le opzioni, esempi progressivi ed errori comuni:
+
+- Widget: [Label](/tkinter/label/) · [Button](/tkinter/button/) · [Entry](/tkinter/entry/) · [Frame](/tkinter/frame/) · [Canvas](/tkinter/canvas/) · [Text](/tkinter/text/) · [Checkbutton](/tkinter/checkbutton/) · [Radiobutton](/tkinter/radiobutton/) · [Listbox](/tkinter/listbox/) · [Menu](/tkinter/menu/) · [Scrollbar](/tkinter/scrollbar/) · [Scale](/tkinter/scale/) · [Spinbox](/tkinter/spinbox/)
+- Layout manager: [pack](/tkinter/pack/) · [grid](/tkinter/grid/) · [place](/tkinter/place/)
+
+### [Label](/tkinter/label/) - etichette di testo
+
+```python
+tk.Label(finestra, text="Inserisci il tuo nome:", font=("Arial", 12)).pack()
+```
+
+Opzioni frequenti: `text`, `font`, `fg` (colore testo), `bg` (sfondo), `padx`/`pady` (padding interno).
+
+### [Button](/tkinter/button/) - pulsanti
+
+Un pulsante esegue una **funzione** quando viene cliccato. La funzione va passata senza parentesi (si passa la funzione, non il suo risultato).
+
+```python
+def saluta():
+    print("Hai cliccato!")
+
+tk.Button(finestra, text="Cliccami", command=saluta).pack()
+```
+
+### [Entry](/tkinter/entry/) - campo di testo
+
+Serve per **leggere** una riga di testo dall'utente.
+
+```python
+nome = tk.Entry(finestra, width=30)
+nome.pack()
+
+# per leggere il contenuto in un momento successivo:
+# testo = nome.get()
+```
+
+### [Frame](/tkinter/frame/) - contenitore
+
+Un `Frame` è un widget invisibile che serve a **raggruppare** altri widget: utile per organizzare la finestra in sezioni e applicare layout diversi.
+
+```python
+intestazione = tk.Frame(finestra, bg="#222", pady=10)
+intestazione.pack(fill="x")
+
+tk.Label(intestazione, text="Titolo", fg="white", bg="#222").pack()
+```
+
+### [Canvas](/tkinter/canvas/) - area di disegno
+
+Permette di disegnare linee, rettangoli, cerchi, testo, immagini. Base per mini-giochi e grafici semplici.
+
+```python
+tela = tk.Canvas(finestra, width=300, height=200, bg="white")
+tela.pack()
+
+tela.create_rectangle(20, 20, 120, 120, fill="tomato", outline="black")
+tela.create_oval(140, 20, 280, 120, fill="dodgerblue")
+tela.create_line(0, 150, 300, 150, width=3)
+tela.create_text(150, 180, text="Disegno base", font=("Arial", 14))
+```
+
+### [Listbox](/tkinter/listbox/) - elenco selezionabile
+
+Mostra una lista di voci cliccabili; combinata con una `Scrollbar` gestisce elenchi lunghi.
+
+```python
+elenco = tk.Listbox(finestra, height=6)
+for voce in ["Mele", "Pere", "Banane", "Fragole", "Ananas", "Uva"]:
+    elenco.insert(tk.END, voce)
+elenco.pack(side="left", fill="y")
+
+barra = tk.Scrollbar(finestra, command=elenco.yview)
+barra.pack(side="left", fill="y")
+elenco.config(yscrollcommand=barra.set)
+```
+
+### [Menu](/tkinter/menu/) - barra dei menu
+
+La classica barra in alto con *File*, *Modifica*, *Aiuto*…
+
+```python
+barra = tk.Menu(finestra)
+finestra.config(menu=barra)
+
+menu_file = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="File", menu=menu_file)
+menu_file.add_command(label="Nuovo", command=lambda: print("Nuovo"))
+menu_file.add_command(label="Apri...", command=lambda: print("Apri"))
+menu_file.add_separator()
+menu_file.add_command(label="Esci", command=finestra.quit)
+```
+
+<Aside type="tip" title="Altri widget utili">
+Esistono anche [Checkbutton](/tkinter/checkbutton/) (caselle a crocetta), [Radiobutton](/tkinter/radiobutton/) (scelta fra alternative), [Scale](/tkinter/scale/) (slider), [Spinbox](/tkinter/spinbox/) (valore numerico con frecce), [Text](/tkinter/text/) (testo su più righe), [Scrollbar](/tkinter/scrollbar/) (barre di scorrimento). Hanno tutti lo stesso schema: `tk.Widget(contenitore, opzioni...).pack()`.
+</Aside>
+
+## 3 · Layout manager
+
+Un widget **non compare** finché non lo posizioni. tkinter offre tre modi (**layout manager**) per sistemare i widget. In una stessa finestra puoi usarne solo uno per contenitore, ma contenitori diversi possono usarne di diversi.
+
+### [pack](/tkinter/pack/) - impilamento semplice
+
+Impila i widget uno sopra l'altro (o uno accanto all'altro). Perfetto per interfacce lineari.
+
+```python
+tk.Label(finestra, text="In alto").pack(side="top")
+tk.Label(finestra, text="A sinistra").pack(side="left")
+tk.Label(finestra, text="A destra").pack(side="right")
+tk.Label(finestra, text="In basso").pack(side="bottom")
+```
+
+Opzioni frequenti: `side` (`top`, `bottom`, `left`, `right`), `fill` (`x`, `y`, `both`), `expand` (True/False), `padx`, `pady`.
+
+### [grid](/tkinter/grid/) - griglia a righe e colonne
+
+Dispone i widget in una **griglia** indicando riga e colonna. È il layout più potente per moduli con etichette e campi affiancati.
+
+```python
+tk.Label(finestra, text="Nome:").grid(row=0, column=0, sticky="e", padx=5, pady=5)
+tk.Entry(finestra).grid(row=0, column=1, padx=5, pady=5)
+
+tk.Label(finestra, text="Email:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+tk.Entry(finestra).grid(row=1, column=1, padx=5, pady=5)
+
+tk.Button(finestra, text="Invia").grid(row=2, column=0, columnspan=2, pady=10)
+```
+
+Opzioni frequenti: `row`, `column`, `rowspan`, `columnspan`, `sticky` (`n`, `s`, `e`, `w` e combinazioni), `padx`, `pady`.
+
+### [place](/tkinter/place/) - posizione assoluta
+
+Posiziona il widget in **pixel precisi**. Da usare raramente: utile per effetti grafici, non per moduli normali.
+
+```python
+tk.Button(finestra, text="OK").place(x=20, y=160, width=80, height=30)
+```
+
+## 4 · Gestione degli eventi
+
+Un evento è qualcosa che succede: click del mouse, pressione di un tasto, chiusura della finestra. Tkinter ti permette di **collegare** una funzione a un evento con il metodo `bind`.
+
+```python
+# evento_tastiera.py - reagire alla pressione dei tasti
+import tkinter as tk
+
+
+def al_tasto(evento):
+    etichetta.config(text=f"Hai premuto: {evento.keysym}")
+
+
+finestra = tk.Tk()
+finestra.title("Eventi tastiera")
+finestra.geometry("320x120")
+
+etichetta = tk.Label(finestra, text="Premi un tasto…", font=("Arial", 14))
+etichetta.pack(pady=30)
+
+finestra.bind("<Key>", al_tasto)   # qualunque tasto
+finestra.bind("<Return>", lambda e: print("Invio!"))
+
+finestra.mainloop()
+```
+
+Eventi più usati: `<Button-1>` (click sinistro), `<Button-3>` (click destro), `<Double-Button-1>` (doppio click), `<Key>` (qualunque tasto), `<Return>` (Invio), `<Escape>`, `<Motion>` (movimento mouse).
+
+<Aside type="tip" title="command o bind?">
+Per i pulsanti si usa `command=funzione` (più semplice). Per **tutti gli altri widget** (o per catturare click destro, doppio click, tasti), si usa `widget.bind("<Evento>", funzione)`.
+</Aside>
+
+## 5 · Variabili di controllo
+
+Per collegare un widget a un valore che può cambiare nel tempo, tkinter offre quattro classi: `StringVar`, `IntVar`, `DoubleVar`, `BooleanVar`. I widget che le supportano si aggiornano **automaticamente** quando la variabile cambia.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+testo = tk.StringVar(value="In attesa…")
+contatore = tk.IntVar(value=0)
+
+
+def incrementa():
+    contatore.set(contatore.get() + 1)
+    testo.set(f"Click numero {contatore.get()}")
+
+
+tk.Label(finestra, textvariable=testo, font=("Arial", 14)).pack(pady=20)
+tk.Button(finestra, text="+1", command=incrementa).pack()
+
+finestra.mainloop()
+```
+
+## 6 · Finestre figlie con Toplevel
+
+`Toplevel` crea una **seconda finestra** collegata a quella principale: utile per finestre "Informazioni", moduli di inserimento, finestre di configurazione.
+
+```python
+# toplevel.py - apertura di una finestra secondaria
+import tkinter as tk
+
+
+def apri_info():
+    info = tk.Toplevel(finestra)
+    info.title("Informazioni")
+    info.geometry("280x120")
+    tk.Label(info, text="Applicazione demo\nversione 1.0", pady=20).pack()
+    tk.Button(info, text="Chiudi", command=info.destroy).pack()
+
+
+finestra = tk.Tk()
+finestra.title("Principale")
+finestra.geometry("300x150")
+tk.Button(finestra, text="Mostra info…", command=apri_info).pack(pady=40)
+
+finestra.mainloop()
+```
+
+## 7 · Messaggi di dialogo
+
+Tkinter fornisce dei moduli dedicati per le finestre di dialogo pronte: avvisi, conferme, selezione file.
+
+### messagebox - avvisi e conferme
+
+```python
+from tkinter import messagebox
+
+messagebox.showinfo("Info", "Operazione riuscita.")
+messagebox.showwarning("Attenzione", "Il valore è vicino al limite.")
+messagebox.showerror("Errore", "File non trovato.")
+
+if messagebox.askyesno("Conferma", "Vuoi davvero uscire?"):
+    finestra.destroy()
+```
+
+Funzioni principali: `showinfo`, `showwarning`, `showerror`, `askokcancel`, `askyesno`, `askyesnocancel`, `askquestion`.
+
+### filedialog - selezione file e cartelle
+
+```python
+from tkinter import filedialog
+
+percorso = filedialog.askopenfilename(
+    title="Apri un file",
+    filetypes=[("Testo", "*.txt"), ("Tutti", "*.*")],
+)
+if percorso:
+    with open(percorso, encoding="utf-8") as f:
+        contenuto = f.read()
+
+dove_salvo = filedialog.asksaveasfilename(defaultextension=".txt")
+cartella = filedialog.askdirectory()
+```
+
+## 8 · Esempio completo - mini rubrica
+
+Un esempio che mette insieme Entry, Button, Listbox, grid, eventi e messagebox. Niente classi: tutto in stile procedurale.
+
+```python
+# rubrica.py - mini rubrica con tkinter
+import tkinter as tk
+from tkinter import messagebox
+
+contatti = []  # lista di dizionari {"nome": ..., "tel": ...}
+
+
+def aggiungi():
+    nome = campo_nome.get().strip()
+    tel = campo_tel.get().strip()
+    if not nome or not tel:
+        messagebox.showwarning("Dati mancanti", "Inserisci nome e telefono.")
+        return
+    contatti.append({"nome": nome, "tel": tel})
+    elenco.insert(tk.END, f"{nome} - {tel}")
+    campo_nome.delete(0, tk.END)
+    campo_tel.delete(0, tk.END)
+    campo_nome.focus()
+
+
+def rimuovi():
+    selezione = elenco.curselection()
+    if not selezione:
+        return
+    indice = selezione[0]
+    nome = contatti[indice]["nome"]
+    if messagebox.askyesno("Conferma", f"Eliminare {nome}?"):
+        contatti.pop(indice)
+        elenco.delete(indice)
+
+
+finestra = tk.Tk()
+finestra.title("Rubrica · quarta")
+finestra.geometry("420x320")
+
+tk.Label(finestra, text="Nome:").grid(row=0, column=0, sticky="e", padx=5, pady=5)
+campo_nome = tk.Entry(finestra, width=25)
+campo_nome.grid(row=0, column=1, padx=5, pady=5)
+
+tk.Label(finestra, text="Telefono:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+campo_tel = tk.Entry(finestra, width=25)
+campo_tel.grid(row=1, column=1, padx=5, pady=5)
+
+tk.Button(finestra, text="Aggiungi", command=aggiungi, width=12).grid(row=2, column=0, pady=5)
+tk.Button(finestra, text="Rimuovi", command=rimuovi, width=12).grid(row=2, column=1, pady=5)
+
+elenco = tk.Listbox(finestra, width=50, height=10)
+elenco.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+
+# Invio nel campo "telefono" conferma l'aggiunta
+campo_tel.bind("<Return>", lambda e: aggiungi())
+
+finestra.mainloop()
+```
+
+## 9 · Consigli pratici
+
+- **Separa logica e interfaccia**: calcoli, lettura file, manipolazione dati vanno in **funzioni indipendenti** dalla UI. La UI si limita a chiamarle. Così il codice è leggibile e puoi riusare la logica anche senza interfaccia.
+- **Non bloccare mainloop**: operazioni lunghe (download, elaborazioni pesanti) bloccano l'interfaccia. Se ti servono davvero, studia il modulo `threading`.
+- **Gestisci gli errori**: le operazioni che possono fallire (apertura file, conversioni) vanno dentro `try/except`, e l'utente va avvisato con `messagebox.showerror`.
+- **Usa i `Frame`**: dividere la finestra in riquadri logici (intestazione, corpo, barra in basso) rende il layout molto più semplice.
+
+## Appendice - customtkinter (opzionale)
+
+`customtkinter` estende tkinter con un **aspetto moderno** (tema scuro di default, pulsanti arrotondati). L'API è quasi identica: i widget diventano `CTkLabel`, `CTkButton`, `CTkEntry`…
+
+Non è obbligatorio e non richiede OOP: va bene se vuoi "fare bella figura" senza cambiare libreria.
+
+### Installazione
+
+```bash
+pip install customtkinter
+```
+
+### Esempio minimo
+
+```python
+# ctk_min.py - finestra moderna con etichetta e pulsante
+import customtkinter as ctk
+
+
+def saluta():
+    testo.configure(text=f"Ciao {ingresso.get() or 'mondo'}!")
+
+
+ctk.set_appearance_mode("dark")        # "light", "dark", "system"
+ctk.set_default_color_theme("blue")
+
+finestra = ctk.CTk()
+finestra.title("Saluto · customtkinter")
+finestra.geometry("360x200")
+
+ingresso = ctk.CTkEntry(finestra, placeholder_text="Il tuo nome", width=240)
+ingresso.pack(pady=15)
+
+ctk.CTkButton(finestra, text="Saluta", command=saluta).pack(pady=5)
+
+testo = ctk.CTkLabel(finestra, text="Scrivi il tuo nome e premi 'Saluta'.")
+testo.pack(pady=15)
+
+finestra.mainloop()
+```
+
+## Da provare
+
+- Rifai il **gioco "indovina il numero"** (vedi [Cicli](/cicli/)) con un'interfaccia tkinter: una `Entry` per il tentativo, un `Button` per confermare, una `Label` che mostra "più alto / più basso / hai vinto".
+- Aggiungi alla **mini rubrica** sopra: il salvataggio dei contatti su file JSON (vedi [File ed eccezioni](/file/)) e il ripristino all'avvio del programma.
+- Trasforma il **convertitore di unità** in un'applicazione con menu a tendina (`OptionMenu`) per scegliere l'unità di partenza e quella di arrivo.

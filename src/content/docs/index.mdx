@@ -1,0 +1,109 @@
+---
+title: Python · Guida TPS quarta
+description: Guida completa a Python per gli studenti di quarta informatica. Teoria, esempi, librerie UI e progetto finale, da usare come risorsa autonoma in classe.
+template: splash
+hero:
+  tagline: Una guida ragionata al linguaggio Python, pensata per essere letta, provata e usata come traccia per il progetto di fine trimestre.<br/>Classe quarta TPS · Prof. Daniele Riva
+  actions:
+    - text: Inizia
+      link: /variabili/
+      icon: right-arrow
+    - text: Vai al progetto finale
+      link: /progetto/
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+## Perché Python
+
+Python è un linguaggio **interpretato**, **tipizzato dinamicamente** e **multiparadigma**. Dal 1991 è diventato lo standard per didattica, automazione, data science, web, scripting e molto altro.
+
+- **Sintassi leggibile**: l'indentazione è parte del linguaggio e forza uno stile pulito.
+- **Pronto all'uso**: la libreria standard copre file, rete, date, matematica, test, basi di dati.
+- **Ecosistema enorme**: con `pip` si installano in un comando pacchetti per quasi qualsiasi scopo.
+- **Portabile**: lo stesso programma gira su Windows, macOS e Linux.
+
+<Aside type="note" title="Versione di riferimento">
+In questa guida usiamo **Python 3.11+**. Il codice resta compatibile con qualsiasi 3.10+ se non diversamente indicato.
+</Aside>
+
+## Installazione rapida
+
+### Windows
+
+1. Vai su [python.org/downloads](https://www.python.org/downloads/) e scarica l'ultima versione 3.x.
+2. Lancia l'installer e **spunta "Add python.exe to PATH"** prima di premere *Install Now*.
+3. Apri PowerShell e verifica:
+
+```powershell
+python --version
+pip --version
+```
+
+### macOS / Linux
+
+Su macOS conviene installare Python con [Homebrew](https://brew.sh/):
+
+```bash
+brew install python
+```
+
+Sulle principali distribuzioni Linux Python 3 è già presente; se manca `pip`:
+
+```bash
+sudo apt install python3 python3-pip   # Debian / Ubuntu
+```
+
+## Eseguire uno script
+
+Crea un file `saluto.py` con questo contenuto:
+
+```python
+# saluto.py - primo programma
+nome = input("Come ti chiami? ")
+print(f"Ciao {nome}, benvenuto in Python!")
+```
+
+Poi, nel terminale aperto nella cartella del file:
+
+```bash
+python saluto.py
+```
+
+Per esperimenti rapidi conviene la **REPL interattiva**: lancia `python` senza argomenti, scrivi un'espressione, premi *Invio* e vedi subito il risultato.
+
+## Come usare questa guida
+
+<CardGrid stagger>
+	<Card title="Leggi, poi prova" icon="open-book">
+		Ogni pagina ha un'introduzione sintetica, esempi commentati e note. Dopo la lettura **digita** gli esempi: imparare Python senza scriverlo non funziona.
+	</Card>
+	<Card title="Esempi progressivi" icon="rocket">
+		Gli esempi di una sezione riprendono concetti delle sezioni precedenti; la guida è pensata per essere letta in ordine.
+	</Card>
+	<Card title="Piccoli esperimenti" icon="setting">
+		Al termine di ogni pagina trovi suggerimenti per modificare il codice e osservarne il comportamento.
+	</Card>
+	<Card title="Verso il progetto" icon="pencil">
+		Tutto quello che leggi serve al **progetto finale**: tienilo presente mentre studi.
+	</Card>
+</CardGrid>
+
+## Mappa del percorso
+
+<CardGrid>
+	<LinkCard title="Variabili e tipi di dato" description="int, float, str, bool, list, tuple, dict, set, input/output e casting." href="/variabili/" />
+	<LinkCard title="Operatori" description="Aritmetici, di confronto, logici, di appartenenza e di identità." href="/operatori/" />
+	<LinkCard title="Controllo di flusso" description="if, elif, else e l'operatore ternario." href="/controllo/" />
+	<LinkCard title="Cicli" description="for, while, range(), break, continue e l'else sui cicli." href="/cicli/" />
+	<LinkCard title="Funzioni" description="def, parametri, return, *args/**kwargs, lambda, scope." href="/funzioni/" />
+	<LinkCard title="Strutture dati" description="Liste, tuple, dizionari, insiemi, comprensioni." href="/strutture/" />
+	<LinkCard title="Moduli e libreria standard" description="import, from...import, os, math, random, datetime." href="/moduli/" />
+	<LinkCard title="File ed eccezioni" description="open(), with, lettura/scrittura, try/except." href="/file/" />
+	<LinkCard title="Interfacce grafiche con tkinter" description="Widget, layout manager, eventi, Toplevel, messagebox e filedialog." href="/librerie-ui/" />
+	<LinkCard title="Ambienti virtuali (venv)" description="Isolare le dipendenze di ogni progetto, creare e attivare un venv." href="/venv/" />
+	<LinkCard title="pip e requirements.txt" description="Installare librerie, congelare le dipendenze, condividere il progetto." href="/pip/" />
+	<LinkCard title="Progetto finale" description="Richieste, criteri e modalità di esposizione." href="/progetto/" />
+</CardGrid>

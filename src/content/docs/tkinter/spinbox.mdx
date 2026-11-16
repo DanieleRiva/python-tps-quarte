@@ -1,0 +1,187 @@
+---
+title: Spinbox - numeri con frecce
+description: Guida al widget Spinbox di tkinter - scegliere un numero con frecce su/giù, intervallo, passo, valori predefiniti.
+sidebar:
+  order: 13
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Spinbox` è un **campo numerico con due frecce** (su/giù) che permettono di incrementare o decrementare il valore. L'utente può anche digitarlo direttamente da tastiera. È una via di mezzo tra `Entry` e [Scale](/tkinter/scale/).
+
+<Aside type="note" title="Quando usarlo">
+- Per valori con **intervallo preciso** e **passo fisso** (età, quantità, numero di copie).
+- Quando il valore va scelto con **precisione al numero**, non trascinando uno slider.
+- Per scegliere tra **valori predefiniti** passando una lista di stringhe.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `from_` | Valore minimo (parola chiave con `_` finale). |
+| `to` | Valore massimo. |
+| `increment` | Passo delle frecce (default `1`). |
+| `values` | Lista/tupla di valori predefiniti (alternativa a `from_`/`to`). |
+| `width` | Larghezza in caratteri. |
+| `textvariable` | `IntVar`, `DoubleVar` o `StringVar` collegata. |
+| `wrap` | Se `True`, dopo l'ultimo valore ricomincia dal primo. |
+| `command` | Funzione chiamata quando si clicca su una freccia (non quando si digita). |
+| `state` | `"normal"`, `"readonly"` (solo frecce, niente tastiera), `"disabled"`. |
+| `font` | Carattere. |
+| `justify` | Allineamento del testo. |
+
+## Metodi utili
+
+| Metodo | Cosa fa |
+|---|---|
+| `.get()` | Restituisce il valore corrente come **stringa**. |
+| `.set(valore)` | Imposta il valore. |
+| `.insert(indice, "testo")` | Come su `Entry`. |
+| `.delete(da, a)` | Come su `Entry`. |
+
+## Esempio 1 · Spinbox base
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("260x120")
+
+tk.Label(finestra, text="Età:").pack(pady=5)
+
+eta = tk.Spinbox(finestra, from_=0, to=120, width=5)
+eta.pack()
+
+tk.Button(finestra, text="Mostra",
+          command=lambda: print("Età:", eta.get())).pack(pady=10)
+
+finestra.mainloop()
+```
+
+`eta.get()` restituisce sempre una **stringa**. Convertila con `int(...)` o `float(...)` per fare calcoli.
+
+## Esempio 2 · Passo personalizzato
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("280x120")
+
+tk.Label(finestra, text="Prezzo (passo 0.5 €):").pack(pady=5)
+
+prezzo = tk.Spinbox(finestra, from_=0.0, to=100.0, increment=0.5, width=8, format="%.2f")
+prezzo.pack()
+
+finestra.mainloop()
+```
+
+`format="%.2f"` costringe la visualizzazione a due decimali.
+
+## Esempio 3 · Valori predefiniti
+
+Se le scelte **non sono numeri** o non seguono un intervallo regolare, usa `values=`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+tk.Label(finestra, text="Taglia:").pack(pady=5)
+
+taglia = tk.Spinbox(
+    finestra,
+    values=("XS", "S", "M", "L", "XL", "XXL"),
+    width=5,
+    state="readonly",   # non si può digitare, solo frecce
+)
+taglia.pack()
+
+tk.Button(finestra, text="Conferma",
+          command=lambda: print("Taglia:", taglia.get())).pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Spinbox con variabile e reazione al cambio
+
+```python
+import tkinter as tk
+
+
+def aggiorna():
+    try:
+        totale.config(text=f"Totale: {int(quantita.get()) * 3.5:.2f} €")
+    except ValueError:
+        totale.config(text="Totale: --")
+
+
+finestra = tk.Tk()
+finestra.geometry("280x160")
+
+quantita = tk.StringVar(value="1")
+
+tk.Label(finestra, text="Quantità:").pack(pady=5)
+
+tk.Spinbox(
+    finestra,
+    from_=1, to=20,
+    textvariable=quantita,
+    width=5,
+    command=aggiorna,
+).pack()
+
+totale = tk.Label(finestra, text="Totale: 3.50 €", font=("Arial", 13, "bold"))
+totale.pack(pady=15)
+
+# Richiama aggiorna anche se l'utente digita a mano
+quantita.trace_add("write", lambda *_: aggiorna())
+
+finestra.mainloop()
+```
+
+`trace_add("write", ...)` fa scattare la callback **anche quando il valore cambia da tastiera**, non solo con le frecce.
+
+## Esempio 5 · Data con tre Spinbox
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.title("Inserisci data")
+
+tk.Label(finestra, text="Data di nascita:").pack(pady=5)
+
+cornice = tk.Frame(finestra)
+cornice.pack(pady=5)
+
+giorno = tk.Spinbox(cornice, from_=1, to=31, width=3)
+mese = tk.Spinbox(cornice, from_=1, to=12, width=3)
+anno = tk.Spinbox(cornice, from_=1950, to=2026, width=5)
+
+giorno.pack(side="left", padx=2)
+tk.Label(cornice, text="/").pack(side="left")
+mese.pack(side="left", padx=2)
+tk.Label(cornice, text="/").pack(side="left")
+anno.pack(side="left", padx=2)
+
+tk.Button(finestra, text="OK",
+          command=lambda: print(f"{giorno.get()}/{mese.get()}/{anno.get()}")
+).pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Spinbox vs Scale vs Entry
+
+- **Spinbox**: numero esatto, poche cifre, serve precisione. Es. "Età: 42".
+- **Scale**: valore in un intervallo, la posizione relativa è importante. Es. "Volume".
+- **Entry**: testo libero, non vincolato. Devi validare tu.
+
+## Errori comuni
+
+- **`from` dà errore di sintassi**: scrivi `from_` con il trattino basso.
+- **L'utente digita lettere**: aggiungi `state="readonly"` oppure validazione come per `Entry`.
+- **La `command` non parte quando digito**: `command` scatta solo per le **frecce**. Per intercettare anche la tastiera usa `trace_add("write", ...)` sulla variabile (vedi esempio 4).
+- **Il passo decimale non torna preciso**: dipende dalla rappresentazione floating-point. Usa `format="%.2f"` per visualizzare bene.

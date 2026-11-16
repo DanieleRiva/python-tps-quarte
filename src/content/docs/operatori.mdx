@@ -1,0 +1,192 @@
+---
+title: Operatori
+description: Operatori aritmetici, di confronto, logici, di appartenenza (in/not in) e di identità (is/is not), con esempi d'uso.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Operatori aritmetici
+
+<table>
+  <thead>
+    <tr>
+      <th class="center">Operatore</th>
+      <th>Significato</th>
+      <th>Esempio</th>
+      <th>Risultato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="center"><code>+</code></td><td>somma</td><td><code>5 + 2</code></td><td><code>7</code></td></tr>
+    <tr><td class="center"><code>-</code></td><td>differenza</td><td><code>5 - 2</code></td><td><code>3</code></td></tr>
+    <tr><td class="center"><code>*</code></td><td>prodotto</td><td><code>5 * 2</code></td><td><code>10</code></td></tr>
+    <tr><td class="center"><code>/</code></td><td>divisione (float)</td><td><code>5 / 2</code></td><td><code>2.5</code></td></tr>
+    <tr><td class="center"><code>//</code></td><td>divisione intera</td><td><code>5 // 2</code></td><td><code>2</code></td></tr>
+    <tr><td class="center"><code>%</code></td><td>modulo (resto)</td><td><code>5 % 2</code></td><td><code>1</code></td></tr>
+    <tr><td class="center"><code>**</code></td><td>potenza</td><td><code>5 ** 2</code></td><td><code>25</code></td></tr>
+  </tbody>
+</table>
+
+```python
+secondi_totali = 3725
+minuti = secondi_totali // 60       # 62
+secondi = secondi_totali % 60       # 5
+print(f"{minuti} min e {secondi} s")
+```
+
+### Assegnazione composta
+
+Ogni operatore aritmetico ha la sua forma di assegnazione:
+
+```python
+punteggio = 10
+punteggio += 5     # equivale a: punteggio = punteggio + 5
+punteggio *= 2
+punteggio //= 3
+```
+
+## Operatori di confronto
+
+Restituiscono sempre un `bool`:
+
+<table>
+  <thead>
+    <tr>
+      <th class="center">Operatore</th>
+      <th>Significato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="center"><code>==</code></td><td>uguale</td></tr>
+    <tr><td class="center"><code>!=</code></td><td>diverso</td></tr>
+    <tr><td class="center"><code>&lt;</code>, <code>&lt;=</code></td><td>minore, minore o uguale</td></tr>
+    <tr><td class="center"><code>&gt;</code>, <code>&gt;=</code></td><td>maggiore, maggiore o uguale</td></tr>
+  </tbody>
+</table>
+
+```python
+voto = 7
+print(voto >= 6)         # True
+print(voto == 10)        # False
+print("a" < "b")         # True: confronto lessicografico
+```
+
+Python permette **confronti concatenati**, molto leggibili:
+
+```python
+eta = 17
+if 14 <= eta < 18:
+    print("Adolescente")
+```
+
+## Operatori logici: `and`, `or`, `not`
+
+Combinano espressioni booleane.
+
+```python
+piove = True
+vento = False
+
+if piove and not vento:
+    print("Prendi l'ombrello.")
+
+if piove or vento:
+    print("Copriti bene.")
+```
+
+<Aside type="tip" title="Short-circuit">
+Python valuta gli operatori logici con **cortocircuito**: in `a and b`, se `a` è falso non valuta `b`; in `a or b`, se `a` è vero non valuta `b`. Si sfrutta per evitare errori:
+
+```python
+testo = None
+if testo and len(testo) > 0:    # len(None) darebbe errore
+    print("non vuoto")
+```
+</Aside>
+
+## Operatori di appartenenza: `in`, `not in`
+
+Verificano se un valore è presente in una collezione o in una stringa.
+
+```python
+vocali = "aeiou"
+if "e" in vocali:
+    print("Sì, e è una vocale.")
+
+numeri_primi = [2, 3, 5, 7, 11]
+print(9 not in numeri_primi)      # True
+```
+
+Funzionano anche sui dizionari (cercano tra le **chiavi**):
+
+```python
+studente = {"nome": "Luca", "eta": 17}
+print("nome" in studente)         # True
+print("Luca" in studente)         # False - non è una chiave
+```
+
+## Operatori di identità: `is`, `is not`
+
+`is` controlla se due nomi fanno riferimento allo **stesso oggetto** in memoria, non se hanno lo stesso valore.
+
+```python
+a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+
+print(a == b)        # True: stesso valore
+print(a is b)        # False: sono due oggetti diversi
+print(a is c)        # True: c è un alias di a
+```
+
+L'uso tipico è il confronto con `None`:
+
+```python
+valore = None
+if valore is None:   # mai `valore == None`
+    print("vuoto")
+```
+
+## Precedenza degli operatori (schema essenziale)
+
+Dall'**alto** (precedenza maggiore) al **basso**:
+
+1. `**`
+2. `+x`, `-x`, `~x` (unari)
+3. `*`, `/`, `//`, `%`
+4. `+`, `-`
+5. confronti `<`, `<=`, `>`, `>=`, `==`, `!=`
+6. `not`
+7. `and`
+8. `or`
+
+In caso di dubbio, **usa le parentesi**: rendono l'espressione più chiara e sicura.
+
+```python
+# Scrivere così è chiaro, anche se non necessario:
+if (eta >= 14) and (eta < 18):
+    ...
+```
+
+## Esempio completo · controllo credenziali
+
+```python
+utente = input("Utente: ").strip()
+password = input("Password: ")
+
+utenti_validi = ["admin", "giulia", "luca"]
+
+if utente in utenti_validi and len(password) >= 8:
+    print(f"Benvenuto, {utente}.")
+elif utente not in utenti_validi:
+    print("Utente sconosciuto.")
+else:
+    print("Password troppo corta.")
+```
+
+## Da provare
+
+- Scrivi un'espressione booleana che è vera se un numero è **divisibile per 3 ma non per 5**.
+- Verifica che `0 and print("eseguita?")` **non** stampa nulla per via del cortocircuito.

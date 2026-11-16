@@ -1,0 +1,884 @@
+{
+  "slug": "sito-astro-python-guide-quarta",
+  "title": "Python Guide quarta",
+  "kind": "sito Astro",
+  "path": "D:\\Taylor\\sito-astro-python-guide-4ib",
+  "status": "pronto",
+  "step": "lavoro completato",
+  "progress": 100,
+  "summary": "Ho aggiunto alla pagina del progetto finale il requisito della consegna su GitHub, con commit regolari e link al repository da inviare al professore.",
+  "created": "2026-11-16T20:14:28",
+  "updated": "2026-11-17T00:31:12",
+  "requests": [
+    {
+      "quando": "2026-11-16T20:14:28",
+      "istruzioni": "Devi creare un sito Astro che funzioni come guida completa a Python per studenti di quarta superiore (indirizzo informatico), da usare come risorsa autonoma in classe al posto di una spiegazione frontale.\n\nSTEP 1 - TROVA IL PROGETTO TEMPLATE\nCerca in D:\\Programs\\laragon\\www un progetto chiamato \"Appunti Terze\" (o simile: \"appunti-terze\", \"appuntiTerze\", ecc.). È un progetto Astro che contiene appunti sulle macchine di Mealy/Moore per le terze. Usa il comando dir o glob per trovarlo. Una volta trovato, leggi la sua struttura (astro.config.mjs, package.json, cartella src/pages, src/layouts, src/components, ecc.) per capire come è organizzato.\n\nSTEP 2 - COPIA LA STRUTTURA\nCopia l'intera struttura del progetto Astro nella cartella D:\\Taylor\\python-guide-quarta\\. Devi replicare: astro.config.mjs, package.json, tsconfig.json se presente, tutto src/, tutto public/ se presente. Non copiare node_modules.\n\nSTEP 3 - SOSTITUISCI TUTTO IL CONTENUTO\nOra sostituisci completamente tutto il contenuto (pagine, componenti, layout) mantenendo la struttura Astro del template, ma con una guida Python completa. Il sito deve essere in italiano, con uno stile pulito e didattico.\n\nSTRUTTURA DEL CONTENUTO (pagine da creare):\n1. index.astro - Home: introduzione a Python, perché si usa, come installarlo, come eseguire uno script\n2. variabili.astro - Tipi di dato (int, float, str, bool, list, tuple, dict, set), dichiarazione variabili, casting, input/output\n3. operatori.astro - Operatori aritmetici, logici, di confronto, in, not in\n4. controllo.astro - if / elif / else, operatore ternario\n5. cicli.astro - for, while, range(), break, continue, else su cicli\n6. funzioni.astro - def, parametri, return, args/kwargs, funzioni lambda, scope\n7. strutture.astro - Liste (append, remove, slicing, list comprehension), tuple, dizionari, set\n8. oop.astro - Classi, oggetti, __init__, metodi, ereditarietà, self\n9. moduli.astro - import, from...import, librerie standard (os, math, random, datetime)\n10. file.astro - Apertura/scrittura/lettura file con open(), with statement, gestione eccezioni try/except\n11. librerie-ui.astro - Pagina dedicata alle librerie UI accettate per il progetto finale: tkinter (base), PyQt6 (consigliato), customtkinter (moderno), wxPython. Per ognuna: breve descrizione, come installarla, esempio minimo funzionante con finestra e un pulsante.\n12. progetto.astro - Pagina con le istruzioni del progetto finale: realizzare un'applicazione Python a libera scelta che utilizzi più concetti visti (variabili, funzioni, strutture dati, OOP, almeno una libreria UI dalla lista). Valutazione: esposizione individuale. Criteri: funzionamento, qualità del codice, uso delle tecnologie richieste, chiarezza nell'esposizione.\n\nSTILE:\n- Mantieni il tema/stile grafico del template originale se è bello e pulito; altrimenti usa un tema scuro moderno con syntax highlighting per il codice (usa lo stesso approccio del template, es. Shiki se già configurato in Astro)\n- Ogni pagina deve avere: titolo chiaro, spiegazione concisa, esempi di codice commentati e funzionanti, eventuali note o avvertenze\n- Navigazione laterale o in alto con i link a tutte le sezioni\n- Gli esempi di codice devono essere realistici e progressivi, non banali\n\nIMPORTANTE:\n- Non installare nulla, non eseguire npm: crea solo i file sorgente\n- Se il template usa componenti riutilizzabili (Layout, CodeBlock, ecc.) mantienili e usali\n- Se qualcosa del template non funziona o non si adatta, riscrivilo da zero in Astro puro\n- Il risultato finale deve essere D:\\Taylor\\python-guide-quarta\\ con tutti i file pronti: aprendo il terminale lì e facendo npm install + npm run dev deve partire subito\n"
+    },
+    {
+      "quando": "2026-11-16T20:31:00",
+      "istruzioni": "Rimuovi la sezione sulla programmazione a oggetti (OOP): elimina il file oop.mdx, togli il link dalla mappa del percorso nella homepage (index.mdx) e aggiorna qualsiasi riferimento all'OOP nelle altre pagine. La guida deve restare coerente senza quella sezione."
+    },
+    {
+      "quando": "2026-11-16T21:03:44",
+      "istruzioni": "Riscrivi la pagina librerie-ui.mdx includendo SOLO tkinter: rimuovi completamente le sezioni di PyQt6, customtkinter e wxPython. Tieni solo la sezione tkinter con il suo esempio minimo, aggiorna la tabella comparativa rimuovendo le altre librerie, e aggiorna anche l'aside \"Quale scegliere?\" togliendo i riferimenti alle altre librerie. Aggiorna anche la homepage (index.mdx) nella mappa del percorso: la LinkCard delle librerie UI deve citare solo tkinter. Il progetto finale (progetto.mdx) va aggiornato se contiene riferimenti ad altre librerie UI oltre tkinter."
+    },
+    {
+      "quando": "2026-11-16T21:03:46",
+      "istruzioni": "Riscrivi la pagina librerie-ui.mdx includendo solo tkinter. Rimuovi le sezioni di PyQt6, customtkinter e wxPython. Aggiorna la tabella e l'aside. Aggiorna index.mdx e progetto.mdx togliendo i riferimenti alle altre librerie UI."
+    },
+    {
+      "quando": "2026-11-16T21:04:24",
+      "istruzioni": "Riscrivi librerie-ui.mdx con solo tkinter, rimuovendo PyQt6, customtkinter e wxPython. Aggiorna index.mdx e progetto.mdx togliendo riferimenti alle altre librerie UI."
+    },
+    {
+      "quando": "2026-11-16T21:11:20",
+      "istruzioni": "Riscrivi completamente il progetto rimuovendo qualsiasi riferimento a PyQt6 e tenendo SOLO tkinter come libreria per le interfacce grafiche. La guida è in formato sito Astro ed è destinata agli studenti di quarta (programmazione, livello scolastico superiore).\n\nIstruzioni specifiche:\n- Rimuovi tutte le sezioni, esempi e spiegazioni che riguardano PyQt6.\n- Mantieni e approfondisci la parte su tkinter: widget di base (Label, Button, Entry, Frame, Canvas, Listbox, Scrollbar, Menu), layout manager (pack, grid, place), gestione degli eventi, finestre figlie (Toplevel), messaggi di dialogo (messagebox, filedialog).\n- Puoi includere anche customtkinter come estensione opzionale di tkinter (per migliorare l'aspetto grafico), dato che è compatibile e non richiede OOP obbligatoria.\n- NON includere PyQt6 in nessuna forma.\n- Mantieni il formato sito Astro con pagine .astro o .md, stile coerente con il resto del progetto esistente.\n- ATTENZIONE: evita nomi di file molto lunghi (più di 50 caratteri) per evitare l'errore WinError 206 su Windows. Usa nomi brevi e descrittivi."
+    },
+    {
+      "quando": "2026-11-16T21:24:30",
+      "istruzioni": "Aggiungi nel sito Astro due contenuti mancanti nella guida:\n\n1. Una pagina (o sezione dedicata) su **venv e gli ambienti virtuali**: spiega cos'è un ambiente virtuale, perché serve (isolare le dipendenze di ogni progetto, evitare conflitti tra versioni), come crearlo (`python -m venv nome_env`), come attivarlo (Windows: `nome_env\\Scripts\\activate`; Mac/Linux: `source nome_env/bin/activate`), come disattivarlo (`deactivate`). Mettila nella sezione \"Strumenti del linguaggio\" o in una nuova sezione \"Ambiente di sviluppo\", dove si inserisce meglio nel flusso della guida.\n\n2. Una spiegazione di **pip e requirements.txt**: cos'è pip, come installare una libreria (`pip install nome`), cos'è requirements.txt (lista delle dipendenze del progetto con le versioni), come generarlo (`pip freeze > requirements.txt`) e come usarlo per reinstallare tutto su un altro PC (`pip install -r requirements.txt`). Questa parte deve essere accessibile e collegata PRIMA della pagina del progetto finale, così quando gli studenti arrivano alla checklist sanno già di cosa si tratta.\n\nCollega queste nuove pagine/sezioni nel menu di navigazione del sito (sidebar). Usa nomi di file brevi (max 30-40 caratteri) per evitare l'errore WinError 206."
+    },
+    {
+      "quando": "2026-11-16T21:24:35",
+      "istruzioni": "Aggiungi nel sito Astro due contenuti mancanti nella guida. 1) Una pagina su venv e ambienti virtuali: spiega cos'e' un ambiente virtuale, perche' serve (isolare le dipendenze, evitare conflitti), come crearlo (python -m venv nome_env), attivarlo (Windows: nome_env\\Scripts\\activate; Mac/Linux: source nome_env/bin/activate) e disattivarlo (deactivate). Inseriscila nella sezione Strumenti del linguaggio o in una nuova sezione Ambiente di sviluppo. 2) Una pagina su pip e requirements.txt: cos'e' pip, come installare una libreria (pip install nome), cos'e' requirements.txt, come generarlo (pip freeze > requirements.txt) e come usarlo su un altro PC (pip install -r requirements.txt). Questa pagina deve comparire nel percorso prima del progetto finale, cosi' quando gli studenti leggono la checklist sanno gia' di cosa si tratta. Collega entrambe le pagine nel menu di navigazione. Usa nomi di file corti, max 30-40 caratteri, per evitare WinError 206."
+    },
+    {
+      "quando": "2026-11-16T22:17:15",
+      "istruzioni": "Le tabelle Markdown (con la sintassi pipe | col1 | col2 |) nella pagina degli operatori e in tutto il sito non vengono renderizzate correttamente: appaiono come testo grezzo con simboli. Ci sono due possibili soluzioni, applica quella più appropriata in base alla configurazione esistente del progetto:\n\n1. Aggiungi il plugin remark-gfm alla configurazione Astro (astro.config.mjs), che abilita le tabelle GitHub Flavored Markdown nei file .mdx. Installa il pacchetto se non c'e' gia' (npm install remark-gfm) e aggiungilo a markdown.remarkPlugins o mdx.remarkPlugins nella config.\n\n2. In alternativa, se la configurazione non lo supporta facilmente, converti le tabelle Markdown in componenti HTML diretti nei file .mdx (tag <table>, <thead>, <tbody>, <tr>, <th>, <td>) con stile coerente con il resto del sito.\n\nControlla tutte le pagine del sito che contengono tabelle (operatori, strutture dati, criteri di valutazione nel progetto finale, ecc.) e assicurati che vengano renderizzate correttamente ovunque. Usa nomi di file corti per evitare WinError 206."
+    },
+    {
+      "quando": "2026-11-16T22:17:19",
+      "istruzioni": "Le tabelle Markdown con la sintassi pipe nelle pagine .mdx non vengono renderizzate: appaiono come testo grezzo. Risolvi cosi': aggiungi il plugin remark-gfm alla configurazione Astro in astro.config.mjs (installa con npm install remark-gfm se manca, poi aggiungilo a markdown.remarkPlugins). Se non funziona, converti le tabelle in HTML diretto con tag table, thead, tbody, tr, th, td con stile coerente col sito. Controlla tutte le pagine con tabelle: operatori, strutture dati, progetto finale. Nomi file corti per evitare WinError 206."
+    },
+    {
+      "quando": "2026-11-16T22:43:46",
+      "istruzioni": "Nella pagina delle Funzioni, rimuovi la sezione \"Default mutabili: trabocchetto classico\" (il riquadro arancione con l'avviso sui default mutabili con lista=[] e il pattern corretto con lista=None). E' un concetto troppo avanzato per studenti di quarta superiore. Rimuovi solo quella sezione, lascia tutto il resto della pagina invariato. Nomi file corti per evitare WinError 206."
+    },
+    {
+      "quando": "2026-11-16T22:43:49",
+      "istruzioni": "Nella pagina delle Funzioni rimuovi la sezione sui default mutabili (il riquadro con avviso arancione, titolo \"Default mutabili: trabocchetto classico\", con l'esempio sbagliato lista=[] e quello corretto lista=None). Troppo avanzato per la quarta. Lascia tutto il resto invariato. Nomi file corti."
+    },
+    {
+      "quando": "2026-11-16T22:44:27",
+      "istruzioni": "Rimetti nella pagina delle Funzioni la sezione \"Default mutabili: trabocchetto classico\" che era stata rimossa. Deve tornare esattamente com'era: riquadro con avviso arancione, spiegazione del problema con lista=[] come default mutabile, esempio sbagliato e esempio corretto con lista=None. Nomi file corti."
+    },
+    {
+      "quando": "2026-11-16T23:53:00",
+      "istruzioni": "Ampliare la sezione sulle interfacce grafiche con tkinter. La pagina esistente (interfacce-grafiche-tkinter o simile) va bene come introduzione generale: non modificarla, ma usarla come riferimento per capire quali componenti sono già stati elencati.\n\nPer ogni componente presente in quella pagina, creare una pagina dedicata separata con:\n- Spiegazione approfondita del componente (cos'è, a cosa serve, quando usarlo)\n- Tutti i parametri/opzioni principali con descrizione\n- Esempi di codice progressivi (dal semplice al più articolato), commentati e spiegati\n- Eventuali note pratiche o errori comuni\n\nI componenti da trattare (ricavali dalla pagina esistente, ma includi almeno): Label, Button, Entry, Frame, Canvas, Text, Checkbutton, Radiobutton, Listbox, Menu, Scrollbar, Scale, Spinbox; e per il layout: Pack, Grid, Place.\n\nOgni pagina deve seguire lo stesso stile grafico e la stessa struttura delle altre pagine della guida. Aggiungere i link alle nuove pagine dalla pagina introduttiva su tkinter (ogni componente menzionato lì deve diventare un link cliccabile alla pagina specifica). Aggiornare anche il menu/indice della guida se presente."
+    },
+    {
+      "quando": "2026-11-17T00:15:26",
+      "istruzioni": "Aggiorna la pagina del progetto finale con i seguenti requisiti:\n\n1. I ragazzi devono usare tkinter per creare un'applicazione a libera scelta inventata da loro — NON una copia o rielaborazione degli esempi già visti (es. rubrica). Deve essere qualcosa di originale: un piccolo gioco, un'app utilitaria, qualcosa che hanno immaginato loro.\n2. Possono usare librerie Python esterne non spiegate a lezione, trovate autonomamente per curiosità.\n3. Il progetto DEVE obbligatoriamente interagire con almeno un file (lettura e/o scrittura).\n4. L'uso dell'AI è vietato per generare il codice del progetto. È tollerato SOLO per chiedere conferme o sciogliere dubbi puntuali — non per farsi scrivere il programma. Specificare che si nota subito e che l'esposizione orale renderà evidente qualsiasi copia.\n5. Oltre al codice, i ragazzi devono consegnare un file PowerPoint di presentazione del progetto che contenga: descrizione dell'applicazione, spiegazione dei vari componenti e pezzi del codice, librerie usate e loro scopo, cosa si è fatto e come, le difficoltà maggiori incontrate, le cose che pensavano fossero difficili e invece non lo erano, e cosa è piaciuto di più. Il PowerPoint deve dimostrare che il progetto è stato fatto attivamente.\n6. L'esposizione sarà orale: il professore potrà fare domande specifiche su qualsiasi parte del progetto e del codice."
+    },
+    {
+      "quando": "2026-11-17T00:26:32",
+      "istruzioni": "Modifica solo la sezione sull'uso dell'AI nella pagina del progetto finale. La regola va riformulata così: l'AI è consentita come supporto puntuale — per farsi spiegare un concetto, ottenere uno snippet di codice su una parte specifica, ricevere un consiglio. NON è consentito usarla per generare intere funzionalità o il progetto nel suo complesso (es. \"fammi questa funzione\", \"scrivi il progetto\"). Il codice deve essere prevalentemente scritto dallo studente, che deve capire ogni parte — anche quella eventualmente suggerita dall'AI. L'esposizione orale e le domande del professore renderanno evidente qualsiasi uso superficiale o delegato."
+    },
+    {
+      "quando": "2026-11-17T00:30:36",
+      "istruzioni": "Aggiungi nella pagina del progetto finale un requisito sulla consegna tramite GitHub: ogni studente deve creare un repository GitHub dedicato a questo progetto. Durante lo sviluppo deve fare commit regolari a ogni modifica significativa (non una sola commit finale). Alla consegna il repository deve contenere: tutto il codice del progetto e il file PowerPoint di presentazione. Il link al repository va consegnato al professore."
+    }
+  ],
+  "log": [
+    {
+      "quando": "2026-11-16T20:14:32",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T20:14:38",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:14:38",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:14:39",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:14:39",
+      "azione": "trova progetto template \"appunti terze\""
+    },
+    {
+      "quando": "2026-11-16T20:15:00",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:15:12",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:15:24",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:15:37",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:15:41",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:15:42",
+      "azione": "leggo package.json"
+    },
+    {
+      "quando": "2026-11-16T20:15:43",
+      "azione": "leggo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T20:15:45",
+      "azione": "leggo content.config.ts"
+    },
+    {
+      "quando": "2026-11-16T20:15:46",
+      "azione": "leggo index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:15:47",
+      "azione": "leggo custom.css"
+    },
+    {
+      "quando": "2026-11-16T20:15:48",
+      "azione": "leggo 03-macchine-di-mealy.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:16:07",
+      "azione": "copia struttura base in python-guide-quarta"
+    },
+    {
+      "quando": "2026-11-16T20:16:11",
+      "azione": "scrivo package.json"
+    },
+    {
+      "quando": "2026-11-16T20:16:23",
+      "azione": "scrivo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T20:16:25",
+      "azione": "scrivo content.config.ts"
+    },
+    {
+      "quando": "2026-11-16T20:16:35",
+      "azione": "scrivo custom.css"
+    },
+    {
+      "quando": "2026-11-16T20:16:44",
+      "azione": "scrivo favicon.svg"
+    },
+    {
+      "quando": "2026-11-16T20:16:45",
+      "azione": "crea pagine guida python"
+    },
+    {
+      "quando": "2026-11-16T20:17:16",
+      "azione": "scrivo index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:17:51",
+      "azione": "scrivo variabili.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:18:14",
+      "azione": "scrivo operatori.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:18:36",
+      "azione": "scrivo controllo.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:18:57",
+      "azione": "scrivo cicli.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:19:25",
+      "azione": "scrivo funzioni.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:19:59",
+      "azione": "scrivo strutture.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:20:30",
+      "azione": "scrivo oop.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:20:57",
+      "azione": "scrivo moduli.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:21:27",
+      "azione": "scrivo file.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:22:08",
+      "azione": "scrivo librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:22:49",
+      "azione": "scrivo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:22:52",
+      "azione": "verifica finale"
+    },
+    {
+      "quando": "2026-11-16T20:22:52",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:22:58",
+      "azione": "scrivo tsconfig.json"
+    },
+    {
+      "quando": "2026-11-16T20:22:59",
+      "azione": "scrivo .gitignore"
+    },
+    {
+      "quando": "2026-11-16T20:23:03",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T20:31:00",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T20:31:03",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T20:31:09",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:31:10",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:31:13",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T20:31:13",
+      "azione": "leggo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T20:31:14",
+      "azione": "leggo index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:31:23",
+      "azione": "leggo librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:31:24",
+      "azione": "leggo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:31:25",
+      "azione": "eseguo un comando"
+    },
+    {
+      "quando": "2026-11-16T20:31:49",
+      "azione": "leggo content.config.ts"
+    },
+    {
+      "quando": "2026-11-16T20:31:50",
+      "azione": "eseguo un comando"
+    },
+    {
+      "quando": "2026-11-16T20:32:04",
+      "azione": "elimina oop.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:06",
+      "azione": "scrivo content.config.ts"
+    },
+    {
+      "quando": "2026-11-16T20:32:07",
+      "azione": "scrivo oop.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:09",
+      "azione": "leggo oop.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:11",
+      "azione": "scrivo oop.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:12",
+      "azione": "aggiorna index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:17",
+      "azione": "modifico index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:20",
+      "azione": "modifico index.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:21",
+      "azione": "aggiorna config sidebar"
+    },
+    {
+      "quando": "2026-11-16T20:32:25",
+      "azione": "modifico astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T20:32:26",
+      "azione": "cerca e aggiorna riferimenti oop"
+    },
+    {
+      "quando": "2026-11-16T20:32:39",
+      "azione": "modifico librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:42",
+      "azione": "modifico librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:47",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:48",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:51",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:53",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:32:55",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T20:33:01",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T21:03:44",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:04:01",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:04:03",
+      "azione": "lavoro interrotto"
+    },
+    {
+      "quando": "2026-11-16T21:04:24",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:04:27",
+      "azione": "lavoro interrotto"
+    },
+    {
+      "quando": "2026-11-16T21:11:20",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:11:23",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:11:28",
+      "azione": "leggi librerie-ui.mdx, index.mdx, progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:11:29",
+      "azione": "leggo librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:11:29",
+      "azione": "leggo index.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:11:30",
+      "azione": "leggo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:11:33",
+      "azione": "riscrivi librerie-ui.mdx con solo tkinter approfondito"
+    },
+    {
+      "quando": "2026-11-16T21:12:57",
+      "azione": "scrivo librerie-ui.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:12:59",
+      "azione": "aggiorna index.mdx e progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:13:02",
+      "azione": "modifico index.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:13:05",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:13:06",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:13:11",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T21:24:30",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:24:34",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:26:46",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:26:50",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T21:26:54",
+      "azione": "verificare pagine venv e pip esistenti"
+    },
+    {
+      "quando": "2026-11-16T21:26:55",
+      "azione": "leggo venv.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:26:56",
+      "azione": "leggo pip.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:26:56",
+      "azione": "leggo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T21:26:57",
+      "azione": "leggo index.mdx"
+    },
+    {
+      "quando": "2026-11-16T21:27:05",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T22:17:15",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:17:19",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:19:30",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:19:34",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:19:39",
+      "azione": "leggo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T22:19:40",
+      "azione": "leggo package.json"
+    },
+    {
+      "quando": "2026-11-16T22:19:40",
+      "azione": "leggere config astro e package.json"
+    },
+    {
+      "quando": "2026-11-16T22:19:46",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:19:48",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:19:51",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:19:55",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:19:56",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:19:57",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:00",
+      "azione": "leggo operatori.mdx"
+    },
+    {
+      "quando": "2026-11-16T22:20:06",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:07",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:12",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:13",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:14",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:26",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:31",
+      "azione": "leggo package.json"
+    },
+    {
+      "quando": "2026-11-16T22:20:33",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:36",
+      "azione": "modifico package.json"
+    },
+    {
+      "quando": "2026-11-16T22:20:40",
+      "azione": "modifico astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T22:20:44",
+      "azione": "verificare tabelle nelle pagine"
+    },
+    {
+      "quando": "2026-11-16T22:20:47",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:20:52",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T22:43:46",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:44:16",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:44:20",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:44:24",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-16T22:44:25",
+      "azione": "trovare sezione default mutabili"
+    },
+    {
+      "quando": "2026-11-16T22:44:51",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:44:55",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T22:44:57",
+      "azione": "leggere funzioni.mdx"
+    },
+    {
+      "quando": "2026-11-16T22:44:59",
+      "azione": "leggo funzioni.mdx"
+    },
+    {
+      "quando": "2026-11-16T22:45:04",
+      "azione": "reinserire sezione default mutabili"
+    },
+    {
+      "quando": "2026-11-16T22:45:11",
+      "azione": "modifico funzioni.mdx"
+    },
+    {
+      "quando": "2026-11-16T22:45:15",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-16T23:53:00",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-16T23:53:04",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-16T23:53:10",
+      "azione": "leggere la pagina tkinter esistente e la config"
+    },
+    {
+      "quando": "2026-11-16T23:53:11",
+      "azione": "leggo tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:53:12",
+      "azione": "leggo astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-16T23:53:12",
+      "azione": "leggo custom.css"
+    },
+    {
+      "quando": "2026-11-16T23:53:16",
+      "azione": "leggo venv.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:53:30",
+      "azione": "creare pagine dedicate per i widget tkinter"
+    },
+    {
+      "quando": "2026-11-16T23:54:01",
+      "azione": "scrivo label.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:54:30",
+      "azione": "scrivo button.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:54:57",
+      "azione": "scrivo entry.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:55:27",
+      "azione": "scrivo frame.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:56:01",
+      "azione": "scrivo canvas.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:56:36",
+      "azione": "scrivo text.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:56:58",
+      "azione": "scrivo checkbutton.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:57:26",
+      "azione": "scrivo radiobutton.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:57:55",
+      "azione": "scrivo listbox.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:58:27",
+      "azione": "scrivo menu.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:58:56",
+      "azione": "scrivo scrollbar.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:59:23",
+      "azione": "scrivo scale.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:59:54",
+      "azione": "scrivo spinbox.mdx"
+    },
+    {
+      "quando": "2026-11-16T23:59:57",
+      "azione": "creare pagine dedicate per i layout manager"
+    },
+    {
+      "quando": "2026-11-17T00:00:31",
+      "azione": "scrivo pack.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:04",
+      "azione": "scrivo grid.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:32",
+      "azione": "scrivo place.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:35",
+      "azione": "aggiornare la pagina tkinter introduttiva con i link"
+    },
+    {
+      "quando": "2026-11-17T00:01:39",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:41",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:42",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:43",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:45",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:46",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:47",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:52",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:53",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:55",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:56",
+      "azione": "modifico tkinter.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:01:59",
+      "azione": "aggiornare il menu/sidebar del sito"
+    },
+    {
+      "quando": "2026-11-17T00:02:05",
+      "azione": "modifico astro.config.mjs"
+    },
+    {
+      "quando": "2026-11-17T00:02:10",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-17T00:15:26",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:15:30",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:15:33",
+      "azione": "leggo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:15:35",
+      "azione": "riscrivere la pagina del progetto finale"
+    },
+    {
+      "quando": "2026-11-17T00:16:54",
+      "azione": "scrivo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:16:57",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-17T00:26:32",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:26:37",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:26:41",
+      "azione": "controllo i file"
+    },
+    {
+      "quando": "2026-11-17T00:26:41",
+      "azione": "trovare sezione ai in progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:26:43",
+      "azione": "leggo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:27:07",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:27:11",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:27:14",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:27:17",
+      "azione": "lavoro completato"
+    },
+    {
+      "quando": "2026-11-17T00:30:36",
+      "azione": "inizio lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:30:40",
+      "azione": "pianifico il lavoro"
+    },
+    {
+      "quando": "2026-11-17T00:30:43",
+      "azione": "leggo progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:30:44",
+      "azione": "leggere progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:31:03",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:31:08",
+      "azione": "modifico progetto.mdx"
+    },
+    {
+      "quando": "2026-11-17T00:31:12",
+      "azione": "lavoro completato"
+    }
+  ]
+}

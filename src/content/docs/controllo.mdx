@@ -1,0 +1,140 @@
+---
+title: Controllo di flusso
+description: if, elif, else, costrutti annidati, operatore ternario e match/case. Come far eseguire a Python istruzioni diverse a seconda delle condizioni.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## `if` / `elif` / `else`
+
+La struttura `if` consente di eseguire un blocco di codice solo se una condizione è vera.
+
+```python
+voto = int(input("Voto (0-10): "))
+
+if voto >= 8:
+    print("Ottimo")
+elif voto >= 6:
+    print("Sufficiente")
+else:
+    print("Insufficiente")
+```
+
+<Aside type="caution" title="L'indentazione è obbligatoria">
+A differenza di C/Java, Python **non usa le graffe**: i blocchi sono definiti dall'indentazione (di solito 4 spazi). Un'indentazione errata genera un `IndentationError`.
+</Aside>
+
+### `if` annidati
+
+```python
+eta = int(input("Età: "))
+patente = input("Patente (si/no): ").lower() == "si"
+
+if eta >= 18:
+    if patente:
+        print("Può guidare.")
+    else:
+        print("Maggiorenne ma senza patente.")
+else:
+    print("Minorenne.")
+```
+
+In molti casi lo stesso codice si scrive meglio combinando le condizioni con `and`:
+
+```python
+if eta >= 18 and patente:
+    print("Può guidare.")
+elif eta >= 18:
+    print("Maggiorenne ma senza patente.")
+else:
+    print("Minorenne.")
+```
+
+## Operatore ternario
+
+Permette di scegliere tra due valori in una singola espressione:
+
+```python
+# Forma:  valore_se_vero  if  condizione  else  valore_se_falso
+eta = 17
+etichetta = "maggiorenne" if eta >= 18 else "minorenne"
+print(etichetta)
+```
+
+Utile per **assegnazioni** e **f-string**:
+
+```python
+voti = [8, 7, 9]
+print(f"Hai {'buoni' if sum(voti) / len(voti) >= 7 else 'scarsi'} risultati.")
+```
+
+<Aside type="tip" title="Quando NON usarlo">
+Se la condizione o i due valori sono complicati, meglio un `if/else` completo: l'operatore ternario è pensato per casi brevi e leggibili.
+</Aside>
+
+## Le "verità" di Python
+
+Negli `if` qualsiasi espressione viene valutata come `bool`. Ricorda cosa è **falso**:
+
+- `False`, `None`
+- `0`, `0.0`
+- `""` (stringa vuota)
+- `[]`, `()`, `{}`, `set()` (collezioni vuote)
+
+Tutto il resto è vero. Per questo si scrive spesso:
+
+```python
+nome = input("Nome: ").strip()
+
+if not nome:                 # vero se la stringa è vuota
+    print("Devi inserire un nome.")
+```
+
+## `match` / `case` (dalla 3.10)
+
+È l'equivalente Python dello `switch` di altri linguaggi, ma più potente perché confronta **pattern**:
+
+```python
+comando = input("> ").strip().lower()
+
+match comando:
+    case "aiuto" | "?":
+        print("Scrivi 'avvia', 'ferma' o 'esci'.")
+    case "avvia":
+        print("Motore acceso.")
+    case "ferma":
+        print("Motore spento.")
+    case "esci":
+        print("Ciao!")
+    case _:
+        print("Comando non riconosciuto.")
+```
+
+Il **wildcard** `_` corrisponde a "qualunque altra cosa" ed è l'equivalente del `default`.
+
+## Esempio completo · calcolo BMI
+
+```python
+peso = float(input("Peso in kg: ").replace(",", "."))
+altezza = float(input("Altezza in metri: ").replace(",", "."))
+
+bmi = peso / (altezza ** 2)
+
+if bmi < 18.5:
+    categoria = "sottopeso"
+elif bmi < 25:
+    categoria = "normopeso"
+elif bmi < 30:
+    categoria = "sovrappeso"
+else:
+    categoria = "obesità"
+
+print(f"BMI = {bmi:.1f} → {categoria}")
+```
+
+## Da provare
+
+- Modifica l'esempio BMI usando l'operatore **ternario** per decidere se stampare un consiglio di attività fisica.
+- Riscrivi la catena di `elif` del BMI con `match`/`case` (suggerimento: usa `case bmi if bmi < 25:`).

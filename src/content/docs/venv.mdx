@@ -1,0 +1,156 @@
+---
+title: Ambienti virtuali (venv)
+description: Cos'è un ambiente virtuale Python, perché serve, come crearlo, attivarlo e disattivarlo su Windows, macOS e Linux.
+sidebar:
+  order: 9
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Il problema delle dipendenze
+
+Appena un progetto cresce, inizi a installare librerie con `pip`: una per l'interfaccia grafica, una per aprire file Excel, un'altra per un grafico. Se installi tutto in modo **globale**, cioè nella versione di Python di sistema, prima o poi succede uno di questi disastri:
+
+- due progetti chiedono **versioni diverse** della stessa libreria e uno dei due smette di funzionare;
+- aggiorni una libreria per un progetto nuovo e **rompi un progetto vecchio** che ti serviva ancora;
+- consegni il codice al compagno o al prof e sul loro PC non parte perché **mancano le librerie giuste**;
+- non ricordi più quali pacchetti servono davvero al tuo progetto e quali li avevi installati "per provare".
+
+La soluzione standard in Python si chiama **ambiente virtuale**.
+
+## Che cos'è un ambiente virtuale
+
+Un ambiente virtuale è una **cartella** che contiene una copia isolata dell'interprete Python e delle librerie che installi al suo interno. Quando l'ambiente è attivo:
+
+- `python` punta all'interprete dentro la cartella del progetto, non a quello di sistema;
+- `pip install` installa **solo** nella cartella del progetto, senza toccare il resto del computer;
+- ogni progetto può avere le sue versioni delle librerie, **senza conflitti** con gli altri.
+
+<Aside type="tip" title="Regola d'oro">
+**Un progetto, un ambiente virtuale.** Si crea appena si inizia a lavorare, prima ancora di scrivere la prima riga di codice.
+</Aside>
+
+## Creare un ambiente virtuale
+
+Il modulo `venv` è incluso in Python e non va installato. Apri il terminale **dentro la cartella del progetto** e lancia:
+
+```bash
+python -m venv .venv
+```
+
+Quello che succede:
+
+- `python -m venv` → avvia il modulo `venv`;
+- `.venv` → è il nome della cartella che verrà creata (contiene l'interprete e le librerie isolate).
+
+Il nome `.venv` (con il punto davanti) è la convenzione più diffusa: è nascosto negli esploratori di file e la maggior parte dei `.gitignore` lo ignora già. Anche `venv` o `env` vanno bene, basta essere coerenti.
+
+<Aside type="caution" title="Attenzione al nome">
+Non chiamare l'ambiente come una libreria che pensi di usare (per esempio `tkinter` o `random`): quando poi scriverai `import tkinter` Python rischierebbe di confondersi.
+</Aside>
+
+## Attivare l'ambiente
+
+Creare la cartella non basta: va **attivata**. Il comando cambia in base al sistema operativo.
+
+### Windows (PowerShell)
+
+```powershell
+.venv\Scripts\activate
+```
+
+Se PowerShell risponde con un errore sull'*execution policy*, esegui una volta sola:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+e poi riprova ad attivare.
+
+### Windows (Prompt dei comandi "cmd")
+
+```bat
+.venv\Scripts\activate.bat
+```
+
+### macOS e Linux
+
+```bash
+source .venv/bin/activate
+```
+
+Quando l'ambiente è attivo, il prompt del terminale cambia e mostra il nome tra parentesi, per esempio:
+
+```text
+(.venv) PS D:\progetti\mia-app>
+```
+
+Da questo momento in poi, in **quel** terminale, i comandi `python` e `pip` lavorano dentro l'ambiente virtuale.
+
+## Verificare di essere dentro l'ambiente
+
+Due comandi utili dopo l'attivazione:
+
+```bash
+python --version
+```
+
+e, per vedere dove si trova davvero l'eseguibile usato:
+
+```bash
+# Windows PowerShell
+Get-Command python
+
+# macOS / Linux
+which python
+```
+
+Il percorso deve puntare alla cartella `.venv\Scripts\python.exe` (Windows) o `.venv/bin/python` (macOS/Linux). Se punta a `C:\Python311\...` o `/usr/bin/python`, l'ambiente **non** è stato attivato.
+
+## Disattivare l'ambiente
+
+Quando hai finito di lavorare, dallo stesso terminale:
+
+```bash
+deactivate
+```
+
+Il prompt torna normale. Non serve "cancellare" niente: l'ambiente resta nella sua cartella, pronto per essere riattivato la volta successiva.
+
+## Un flusso di lavoro tipico
+
+<CardGrid>
+	<Card title="1. Creo la cartella del progetto" icon="document">
+		`mkdir mia-app` e poi `cd mia-app`.
+	</Card>
+	<Card title="2. Creo l'ambiente" icon="seti:python">
+		`python -m venv .venv`
+	</Card>
+	<Card title="3. Attivo l'ambiente" icon="rocket">
+		`.venv\Scripts\activate` (Windows) o `source .venv/bin/activate` (macOS/Linux).
+	</Card>
+	<Card title="4. Installo le librerie" icon="setting">
+		`pip install ...` ([vedi pip e requirements.txt](/pip/)).
+	</Card>
+	<Card title="5. Lavoro al progetto" icon="pencil">
+		Scrivo codice, lancio `python main.py`, debug, ecc.
+	</Card>
+	<Card title="6. Chiudo con calma" icon="approve-check">
+		`deactivate` e chiudo il terminale.
+	</Card>
+</CardGrid>
+
+## Errori comuni
+
+- **"Il comando `python` non viene riconosciuto"** → Python non è nel PATH. Reinstallalo spuntando *Add python.exe to PATH*.
+- **Dopo aver chiuso il terminale "l'ambiente non c'è più"** → l'attivazione vale solo per il terminale aperto. Ogni volta che apri un terminale nuovo devi ri-attivarlo.
+- **Installo una libreria ma `import` dice che non esiste** → quasi sempre l'ambiente non era attivo al momento del `pip install`, oppure stai lanciando il file con l'interprete sbagliato (per esempio dall'IDE che non conosce il `.venv`).
+- **Nell'IDE non vede le librerie** → in VS Code, PyCharm e simili bisogna scegliere l'interprete del `.venv`: nella barra in basso o nei settings cerca "Python interpreter" e seleziona `.venv\Scripts\python.exe`.
+
+<Aside type="note" title="Da non committare">
+La cartella `.venv` **non va mai caricata su GitHub o consegnata**: è grossa, specifica del tuo PC e si ricrea in pochi secondi. Aggiungila al `.gitignore`. Le dipendenze si condividono con il file `requirements.txt`, che vedi nella [prossima pagina](/pip/).
+</Aside>
+
+## Perché lo faremo sempre nel progetto finale
+
+Nel progetto di fine periodo è richiesto un `requirements.txt` e il docente deve poter ricreare il tuo ambiente con due comandi. L'ambiente virtuale è il **presupposto**: senza, `pip freeze` sputa fuori tutto quello che hai installato sul PC in tre anni (e non sta in piedi). Con `.venv` invece elenchi **solo** ciò che il tuo progetto usa davvero.

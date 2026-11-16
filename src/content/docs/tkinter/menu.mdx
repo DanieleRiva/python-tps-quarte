@@ -1,0 +1,193 @@
+---
+title: Menu - barra dei menu
+description: Guida al widget Menu di tkinter - barra dei menu principale, sottomenu, menu contestuale (click destro), scorciatoie da tastiera.
+sidebar:
+  order: 10
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Menu` costruisce la classica **barra dei menu in alto** (File, Modifica, Aiuto…) oppure un **menu contestuale** che appare con il click destro. È fondamentale in qualunque app "seria" perché raccoglie i comandi senza affollare la finestra di pulsanti.
+
+<Aside type="note" title="Quando usarlo">
+- Per **comandi globali** dell'app: nuovo, apri, salva, esci.
+- Per **scorciatoie da tastiera** (es. `Ctrl+S`, `Ctrl+O`).
+- Per un **menu contestuale** sul click destro di una lista o di un canvas.
+</Aside>
+
+## Componenti principali
+
+| Elemento | Cosa fa |
+|---|---|
+| **Menu principale** | Il contenitore collegato alla finestra con `finestra.config(menu=...)`. |
+| **Cascade** | Una voce che apre un sottomenu (`add_cascade`). |
+| **Command** | Una voce cliccabile (`add_command`). |
+| **Separator** | Una linea divisoria (`add_separator`). |
+| **Checkbutton / Radiobutton** | Voci spuntabili o a scelta esclusiva dentro il menu. |
+
+## Opzioni comuni di `add_command`
+
+| Opzione | A cosa serve |
+|---|---|
+| `label` | Testo visualizzato. |
+| `command` | Funzione da eseguire al click. |
+| `accelerator` | **Testo** della scorciatoia (es. `"Ctrl+S"`) mostrato a destra. Non attiva davvero il tasto: devi collegarlo con `bind`. |
+| `state` | `"normal"` o `"disabled"`. |
+| `underline` | Indice della lettera da sottolineare (per `Alt+lettera`). |
+
+## Esempio 1 · Barra dei menu base
+
+```python
+import tkinter as tk
+from tkinter import messagebox
+
+finestra = tk.Tk()
+finestra.title("App con menu")
+finestra.geometry("360x200")
+
+barra = tk.Menu(finestra)
+finestra.config(menu=barra)
+
+# Menu File
+menu_file = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="File", menu=menu_file)
+menu_file.add_command(label="Nuovo",  command=lambda: print("Nuovo"))
+menu_file.add_command(label="Apri...", command=lambda: print("Apri"))
+menu_file.add_command(label="Salva",   command=lambda: print("Salva"))
+menu_file.add_separator()
+menu_file.add_command(label="Esci", command=finestra.destroy)
+
+# Menu Aiuto
+menu_aiuto = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="Aiuto", menu=menu_aiuto)
+menu_aiuto.add_command(
+    label="Informazioni",
+    command=lambda: messagebox.showinfo("App", "Versione 1.0")
+)
+
+finestra.mainloop()
+```
+
+<Aside type="tip" title="tearoff=0">
+Senza `tearoff=0` tkinter mette in cima una riga tratteggiata che "stacca" il menu in una finestrella. È una funzione vecchia e brutta: mettilo sempre a `0`.
+</Aside>
+
+## Esempio 2 · Sottomenu annidati
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+barra = tk.Menu(finestra)
+finestra.config(menu=barra)
+
+menu_modifica = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="Modifica", menu=menu_modifica)
+
+# Sottomenu "Trasforma" dentro "Modifica"
+trasforma = tk.Menu(menu_modifica, tearoff=0)
+trasforma.add_command(label="MAIUSCOLO")
+trasforma.add_command(label="minuscolo")
+trasforma.add_command(label="Iniziali Maiuscole")
+menu_modifica.add_cascade(label="Trasforma testo", menu=trasforma)
+
+menu_modifica.add_separator()
+menu_modifica.add_command(label="Preferenze…")
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Scorciatoie da tastiera
+
+L'`accelerator` è solo **testo**. Per attivarla davvero serve un `bind` sulla finestra.
+
+```python
+import tkinter as tk
+
+
+def salva(evento=None):
+    print("Salvato!")
+
+
+finestra = tk.Tk()
+finestra.title("Scorciatoie")
+finestra.geometry("300x150")
+
+barra = tk.Menu(finestra)
+finestra.config(menu=barra)
+
+menu_file = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="File", menu=menu_file)
+menu_file.add_command(label="Salva", accelerator="Ctrl+S", command=salva)
+
+finestra.bind_all("<Control-s>", salva)   # qui la scorciatoia diventa viva
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Checkbutton e Radiobutton nel menu
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.title("Preferenze")
+
+barra = tk.Menu(finestra)
+finestra.config(menu=barra)
+
+visualizza = tk.Menu(barra, tearoff=0)
+barra.add_cascade(label="Visualizza", menu=visualizza)
+
+notifiche = tk.BooleanVar(value=True)
+visualizza.add_checkbutton(label="Notifiche", variable=notifiche)
+
+visualizza.add_separator()
+
+tema = tk.StringVar(value="chiaro")
+visualizza.add_radiobutton(label="Tema chiaro", variable=tema, value="chiaro")
+visualizza.add_radiobutton(label="Tema scuro",  variable=tema, value="scuro")
+
+tk.Button(finestra,
+          text="Stato",
+          command=lambda: print(notifiche.get(), tema.get())
+).pack(pady=20)
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Menu contestuale (click destro)
+
+```python
+import tkinter as tk
+
+
+def mostra_menu(evento):
+    menu_ctx.tk_popup(evento.x_root, evento.y_root)
+
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+tela = tk.Canvas(finestra, bg="white")
+tela.pack(fill="both", expand=True)
+
+menu_ctx = tk.Menu(finestra, tearoff=0)
+menu_ctx.add_command(label="Copia",   command=lambda: print("Copia"))
+menu_ctx.add_command(label="Incolla", command=lambda: print("Incolla"))
+menu_ctx.add_separator()
+menu_ctx.add_command(label="Pulisci", command=lambda: tela.delete("all"))
+
+tela.bind("<Button-3>", mostra_menu)    # click destro
+
+finestra.mainloop()
+```
+
+Su macOS il tasto destro è `<Button-2>`: se vuoi essere portabile, collega entrambi.
+
+## Errori comuni
+
+- **La barra non appare**: hai dimenticato `finestra.config(menu=barra)`.
+- **La scorciatoia è scritta ma non funziona**: `accelerator` è solo cosmetico, devi aggiungere `finestra.bind_all("<Control-s>", funzione)`.
+- **`AttributeError` su `add_cascade`**: hai creato il sottomenu come `Menu(finestra, ...)` invece di `Menu(barra, ...)`. Non è grave, ma il contenitore giusto è il menu padre.
+- **Compare una linea tratteggiata in cima**: aggiungi `tearoff=0` al menu.

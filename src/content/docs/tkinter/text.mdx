@@ -1,0 +1,167 @@
+---
+title: Text - testo su più righe
+description: Guida al widget Text di tkinter - inserire, leggere, cancellare testo, indici riga.colonna, tag e formattazione, read-only.
+sidebar:
+  order: 6
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Text` è un **editor di testo** su più righe: l'utente (o il programma) può scrivere, cancellare, selezionare, formattare parole con colori diversi. Per una **singola riga** usa invece [Entry](/tkinter/entry/).
+
+<Aside type="note" title="Quando usarlo">
+- Per **note**, **messaggi**, **descrizioni** lunghe.
+- Per mostrare un **log** di cosa sta facendo il programma.
+- Per aree di output in cui vuoi colorare o evidenziare parti del testo.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `width` | Larghezza **in caratteri**. |
+| `height` | Altezza **in righe**. |
+| `font`, `fg`, `bg` | Carattere, colore testo, colore sfondo. |
+| `wrap` | Ritorno a capo: `"word"` (al limite di parola), `"char"` (al carattere), `"none"` (no wrap, scroll orizzontale). |
+| `state` | `"normal"` o `"disabled"` (sola lettura). |
+| `padx`, `pady` | Spazio interno. |
+| `undo` | Se `True`, abilita il tasto *Ctrl+Z* per annullare. |
+
+## Indici: `"riga.colonna"`
+
+Nel `Text` le posizioni si scrivono come stringhe `"riga.colonna"`, con le righe che partono da **1** e le colonne da **0**.
+
+| Indice | Significato |
+|---|---|
+| `"1.0"` | Inizio del testo (riga 1, colonna 0). |
+| `tk.END` | Fine di tutto il testo (equivale a `"end"`). |
+| `"2.5"` | Riga 2, dopo 5 caratteri. |
+| `"insert"` | Posizione corrente del cursore. |
+| `"end-1c"` | Un carattere prima della fine (per togliere il `\n` finale). |
+
+## Metodi principali
+
+| Metodo | Cosa fa |
+|---|---|
+| `.insert(indice, "testo")` | Inserisce testo. |
+| `.get(da, a)` | Restituisce il testo tra due indici. `get("1.0", tk.END)` legge tutto. |
+| `.delete(da, a)` | Cancella una porzione. `delete("1.0", tk.END)` svuota il widget. |
+| `.see(indice)` | Fa scorrere la vista fino a mostrare quel punto. |
+| `.tag_add("nome", da, a)` | Marca una porzione con un'etichetta. |
+| `.tag_config("nome", …)` | Configura come appare un tag (colore, font, sfondo). |
+
+## Esempio 1 · Inserire e leggere
+
+```python
+import tkinter as tk
+
+
+def mostra_tutto():
+    contenuto = casella.get("1.0", tk.END).rstrip("\n")
+    print("---")
+    print(contenuto)
+
+
+finestra = tk.Tk()
+finestra.geometry("400x260")
+
+casella = tk.Text(finestra, width=50, height=10, wrap="word")
+casella.pack(padx=10, pady=10)
+casella.insert("1.0", "Scrivi qualcosa qui…")
+
+tk.Button(finestra, text="Stampa in console", command=mostra_tutto).pack()
+
+finestra.mainloop()
+```
+
+Il `.rstrip("\n")` toglie il newline finale che `Text` aggiunge sempre.
+
+## Esempio 2 · Area di log sola lettura
+
+```python
+import tkinter as tk
+import datetime
+
+
+def scrivi(messaggio):
+    log.config(state="normal")                # sblocco
+    ora = datetime.datetime.now().strftime("%H:%M:%S")
+    log.insert(tk.END, f"[{ora}] {messaggio}\n")
+    log.see(tk.END)                            # scorri alla fine
+    log.config(state="disabled")              # riblocco
+
+
+finestra = tk.Tk()
+finestra.geometry("420x280")
+
+log = tk.Text(finestra, width=50, height=12, state="disabled",
+              bg="#111", fg="#0f0", font=("Consolas", 10))
+log.pack(padx=10, pady=10)
+
+tk.Button(finestra, text="Avvio",
+          command=lambda: scrivi("Avvio del sistema")).pack(side="left", padx=5)
+tk.Button(finestra, text="Errore",
+          command=lambda: scrivi("ERRORE: connessione persa")).pack(side="left", padx=5)
+
+finestra.mainloop()
+```
+
+Il widget è `"disabled"` di default: lo sblocchiamo solo durante la scrittura, così l'utente non può modificare il log.
+
+## Esempio 3 · Colorare parti di testo con i tag
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+casella = tk.Text(finestra, width=50, height=8, wrap="word")
+casella.pack(padx=10, pady=10)
+
+casella.insert("1.0",
+    "Questa è una frase normale.\n"
+    "Questa è importante!\n"
+    "Questa è un errore.\n"
+)
+
+casella.tag_add("warn", "2.0", "2.end")
+casella.tag_add("err",  "3.0", "3.end")
+
+casella.tag_config("warn", foreground="#b8860b", font=("Arial", 10, "bold"))
+casella.tag_config("err",  foreground="white", background="#c0392b")
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Text con scrollbar
+
+Con testi lunghi serve una [Scrollbar](/tkinter/scrollbar/).
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("420x240")
+
+cornice = tk.Frame(finestra)
+cornice.pack(padx=10, pady=10, fill="both", expand=True)
+
+casella = tk.Text(cornice, wrap="word")
+casella.pack(side="left", fill="both", expand=True)
+
+barra = tk.Scrollbar(cornice, command=casella.yview)
+barra.pack(side="right", fill="y")
+
+casella.config(yscrollcommand=barra.set)
+
+for i in range(1, 51):
+    casella.insert(tk.END, f"Riga numero {i}\n")
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **`get()` restituisce un `\n` di troppo**: è il comportamento standard. Togli con `.rstrip("\n")`.
+- **Inserisco testo ma non appare**: il widget è `"disabled"`. Sbloccalo, inserisci, ri-bloccalo (vedi esempio 2).
+- **Confusione con `Entry`**: `Entry` è per una riga sola; `Text` è per più righe.
+- **Indici sbagliati**: ricorda che le righe partono da 1 e le colonne da 0. `"0.0"` **non** esiste.

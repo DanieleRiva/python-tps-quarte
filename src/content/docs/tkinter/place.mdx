@@ -1,0 +1,154 @@
+---
+title: Place - posizione assoluta
+description: Guida al layout manager place di tkinter - posizioni in pixel e in frazioni della finestra, quando usarlo e quando evitarlo.
+sidebar:
+  order: 22
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`place` è il terzo layout manager di tkinter: ti permette di mettere un widget in una **posizione precisa**, in **pixel** o in **frazione** del contenitore (`0.0` = inizio, `1.0` = fine).
+
+<Aside type="note" title="Quando usarlo">
+- **Schermate splash**, titoli grandi centrati, loghi in overlay.
+- **Posizionare un widget sopra un Canvas** in un punto preciso.
+- Mini-giochi in cui vuoi muovere elementi di qualche pixel.
+- **Non** usarlo per moduli normali: usa `grid` o `pack`.
+</Aside>
+
+## Opzioni principali
+
+### Posizione in pixel
+
+| Opzione | A cosa serve |
+|---|---|
+| `x` | Coordinata orizzontale (in pixel) dal bordo sinistro del contenitore. |
+| `y` | Coordinata verticale dal bordo superiore. |
+| `width`, `height` | Dimensioni in pixel (se omesse, il widget prende la sua dimensione naturale). |
+
+### Posizione relativa (0.0 - 1.0)
+
+| Opzione | A cosa serve |
+|---|---|
+| `relx`, `rely` | Posizione come **frazione** del contenitore. `relx=0.5, rely=0.5` = centro. |
+| `relwidth`, `relheight` | Dimensioni come frazione del contenitore. |
+| `anchor` | Quale punto del widget corrisponde a `(x, y)`: `"nw"` (default), `"center"`, `"ne"`, ecc. |
+
+## Esempio 1 · Posizione in pixel
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+tk.Button(finestra, text="A").place(x=20,  y=20)
+tk.Button(finestra, text="B").place(x=100, y=60, width=80, height=40)
+tk.Button(finestra, text="C").place(x=200, y=130)
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Widget centrato
+
+Il modo più semplice di centrare un widget è combinare `relx=0.5`, `rely=0.5` e `anchor="center"`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+tk.Label(
+    finestra,
+    text="Centro perfetto",
+    font=("Arial", 16, "bold"),
+    bg="#1b4367",
+    fg="white",
+    padx=20, pady=10,
+).place(relx=0.5, rely=0.5, anchor="center")
+
+finestra.mainloop()
+```
+
+Senza `anchor="center"`, `(relx, rely)` indica dove va l'angolo in alto a sinistra del widget: il risultato non sarebbe centrato.
+
+## Esempio 3 · Frazioni del contenitore
+
+Con `relwidth` / `relheight` puoi dire "prendi metà della finestra".
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("360x220")
+
+sinistra = tk.Frame(finestra, bg="#eef")
+sinistra.place(relx=0, rely=0, relwidth=0.5, relheight=1.0)
+tk.Label(sinistra, text="Sinistra", bg="#eef").place(relx=0.5, rely=0.5, anchor="center")
+
+destra = tk.Frame(finestra, bg="#fee")
+destra.place(relx=0.5, rely=0, relwidth=0.5, relheight=1.0)
+tk.Label(destra, text="Destra", bg="#fee").place(relx=0.5, rely=0.5, anchor="center")
+
+finestra.mainloop()
+```
+
+Allarga la finestra: i due pannelli restano sempre a 50/50 perché le dimensioni sono relative.
+
+## Esempio 4 · Overlay su un Canvas
+
+Utile nei mini-giochi: un pulsante "Pausa" sopra la scena.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("400x260")
+
+tela = tk.Canvas(finestra, bg="skyblue")
+tela.pack(fill="both", expand=True)
+tela.create_text(200, 130, text="Scena di gioco", font=("Arial", 16, "bold"))
+
+tk.Button(finestra, text="Pausa").place(x=10, y=10)       # sopra il canvas
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Mix: pulsante in basso a destra
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("320x200")
+
+tk.Label(finestra, text="App di prova", font=("Arial", 14)).pack(pady=10)
+
+tk.Button(finestra, text="Aggiungi +").place(relx=1.0, rely=1.0,
+                                             x=-15, y=-15,     # 15 pixel di margine
+                                             anchor="se")
+
+finestra.mainloop()
+```
+
+Combinando `relx`/`rely` con `x`/`y` **negativi** ottieni il classico pulsante "a 15 pixel dal bordo in basso a destra".
+
+## Pack / Grid / Place: quale scegliere?
+
+| Caso | Scelta consigliata |
+|---|---|
+| Barre impilate, toolbar, footer | [pack](/tkinter/pack/) |
+| Form con etichette e campi, tabelle di pulsanti | [grid](/tkinter/grid/) |
+| Posizione precisa o overlay | `place` |
+
+<Aside type="caution" title="Niente mix nello stesso contenitore">
+Anche qui vale la regola: **un solo** geometry manager per contenitore. Non puoi usare `grid` e `place` insieme, né `pack` e `place`.
+</Aside>
+
+## Errori comuni
+
+- **Il widget non si sposta quando ridimensiono la finestra**: hai usato `x`/`y` in pixel. Passa a `relx`/`rely`.
+- **Il widget non si centra**: ricorda `anchor="center"`.
+- **Due widget sovrapposti**: con `place` è facile. Controlla le coordinate.
+- **Il layout è impossibile da mantenere**: stai usando `place` dove dovresti usare `grid`. Nel 90% dei casi `grid` è più semplice e robusto.

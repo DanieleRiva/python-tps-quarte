@@ -1,0 +1,166 @@
+---
+title: Frame - contenitori
+description: Guida al widget Frame di tkinter - raggruppare widget, layout misti, bordi, sezioni della finestra e LabelFrame.
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Frame` è un **contenitore invisibile**: non mostra nulla di suo, ma serve a **raggruppare** altri widget. È lo strumento numero uno per organizzare bene una finestra: intestazione in alto, corpo centrale, barra pulsanti in basso, ognuno dentro un `Frame` diverso.
+
+<Aside type="note" title="Quando usarlo">
+- Per **dividere la finestra** in sezioni logiche (header, contenuto, footer).
+- Per **mescolare layout manager**: la finestra usa `pack`, un frame interno usa `grid`.
+- Per **dare un bordo** o un colore di sfondo a un gruppo di widget.
+- Per **nascondere o mostrare** un intero blocco di widget in un colpo solo.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `bg` | Colore di sfondo del frame. |
+| `width`, `height` | Dimensioni **in pixel**. Di default il frame si adatta al suo contenuto. |
+| `padx`, `pady` | Spazio **interno** intorno al contenuto. |
+| `borderwidth` (o `bd`) | Spessore del bordo in pixel. |
+| `relief` | Stile del bordo: `"flat"` (default), `"ridge"`, `"solid"`, `"groove"`, `"raised"`, `"sunken"`. |
+| `cursor` | Cursore del mouse sopra l'area del frame. |
+
+## Esempio 1 · Dividere la finestra in tre sezioni
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("360x240")
+finestra.title("Tre sezioni")
+
+# Intestazione
+header = tk.Frame(finestra, bg="#1b4367", height=50)
+header.pack(fill="x")
+tk.Label(header, text="La mia app", fg="white", bg="#1b4367",
+         font=("Arial", 14, "bold")).pack(pady=12)
+
+# Corpo centrale
+corpo = tk.Frame(finestra, bg="white")
+corpo.pack(fill="both", expand=True)
+tk.Label(corpo, text="Contenuto principale", bg="white").pack(pady=40)
+
+# Barra pulsanti in basso
+footer = tk.Frame(finestra, bg="#eeeeee", height=40)
+footer.pack(fill="x")
+tk.Button(footer, text="Annulla").pack(side="right", padx=5, pady=5)
+tk.Button(footer, text="OK").pack(side="right", padx=5, pady=5)
+
+finestra.mainloop()
+```
+
+`fill="x"` fa in modo che il frame occupi tutta la larghezza; `expand=True` sul corpo lo fa allargare verticalmente per riempire lo spazio libero.
+
+## Esempio 2 · Mescolare pack e grid
+
+Non puoi usare `pack` e `grid` **nello stesso contenitore**, ma puoi usarli in contenitori diversi. Il trucco: metti il modulo con `grid` dentro un `Frame`, e piazza il `Frame` con `pack`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("360x200")
+
+tk.Label(finestra, text="Modulo di contatto",
+         font=("Arial", 13, "bold")).pack(pady=10)
+
+# Il modulo vero e proprio in un Frame separato, con grid
+modulo = tk.Frame(finestra)
+modulo.pack(pady=10)
+
+tk.Label(modulo, text="Nome:").grid(row=0, column=0, sticky="e", padx=5, pady=3)
+tk.Entry(modulo, width=25).grid(row=0, column=1, padx=5, pady=3)
+
+tk.Label(modulo, text="Email:").grid(row=1, column=0, sticky="e", padx=5, pady=3)
+tk.Entry(modulo, width=25).grid(row=1, column=1, padx=5, pady=3)
+
+tk.Button(finestra, text="Invia").pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Frame con bordo
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x180")
+
+riquadro = tk.Frame(finestra, borderwidth=2, relief="ridge", padx=15, pady=15)
+riquadro.pack(padx=20, pady=20)
+
+tk.Label(riquadro, text="Punteggio finale", font=("Arial", 12)).pack()
+tk.Label(riquadro, text="42 / 50", font=("Arial", 24, "bold"),
+         fg="#1b4367").pack(pady=5)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Mostrare e nascondere un gruppo
+
+Un `Frame` può essere rimosso dalla finestra con `.pack_forget()` o `.grid_forget()` e rimesso quando serve: utile per **sezioni opzionali** o schede.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+visibile = True
+
+
+def alterna():
+    global visibile
+    if visibile:
+        riquadro.pack_forget()
+    else:
+        riquadro.pack(pady=10)
+    visibile = not visibile
+
+
+tk.Button(finestra, text="Mostra/Nascondi dettagli", command=alterna).pack(pady=10)
+
+riquadro = tk.Frame(finestra, bg="#eef3fb", padx=15, pady=15)
+riquadro.pack(pady=10)
+tk.Label(riquadro, text="Dettagli segreti!", bg="#eef3fb").pack()
+
+finestra.mainloop()
+```
+
+## LabelFrame - frame con titolo
+
+`LabelFrame` è una variante del `Frame` con un **titolo integrato** nel bordo: utile per raggruppare opzioni in un modo visivamente chiaro.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x180")
+
+opzioni = tk.LabelFrame(finestra, text="Preferenze", padx=15, pady=10)
+opzioni.pack(padx=15, pady=15, fill="x")
+
+tk.Checkbutton(opzioni, text="Notifiche attive").pack(anchor="w")
+tk.Checkbutton(opzioni, text="Tema scuro").pack(anchor="w")
+tk.Checkbutton(opzioni, text="Avvio automatico").pack(anchor="w")
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **Il frame non compare**: hai dimenticato di chiamare `.pack()` o `.grid()`. Un widget creato ma non posizionato è invisibile.
+- **Il frame "si schiaccia"**: è vuoto e tkinter lo riduce al minimo. Imposta `width`/`height` **e** `propagate(False)` per forzare una dimensione fissa:
+
+  ```python
+  frame.pack_propagate(False)   # non ridurti al contenuto
+  ```
+- **Errore "cannot use geometry manager"**: dentro lo stesso frame stai usando sia `pack` che `grid`. Scegline uno.

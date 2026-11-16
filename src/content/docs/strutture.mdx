@@ -1,0 +1,207 @@
+---
+title: Strutture dati
+description: Liste (append, remove, slicing, comprensioni), tuple, dizionari e insiemi. Operazioni comuni, differenze e quando usarli.
+sidebar:
+  order: 6
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Python mette a disposizione quattro collezioni predefinite. Sceglierne quella giusta è il primo passo per scrivere codice pulito.
+
+<table>
+  <thead>
+    <tr>
+      <th>Struttura</th>
+      <th class="center">Ordinata?</th>
+      <th class="center">Modificabile?</th>
+      <th class="center">Duplicati?</th>
+      <th>Accesso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>list</code></td><td class="center">sì</td><td class="center">sì</td><td class="center">sì</td><td>per indice</td></tr>
+    <tr><td><code>tuple</code></td><td class="center">sì</td><td class="center"><strong>no</strong></td><td class="center">sì</td><td>per indice</td></tr>
+    <tr><td><code>dict</code></td><td class="center">sì (dal 3.7)</td><td class="center">sì</td><td class="center">chiavi uniche</td><td>per chiave</td></tr>
+    <tr><td><code>set</code></td><td class="center">no</td><td class="center">sì</td><td class="center"><strong>no</strong></td><td>per appartenenza</td></tr>
+  </tbody>
+</table>
+
+## Liste
+
+Una lista è una sequenza **ordinata** e **modificabile**.
+
+```python
+voti = [8, 7, 9, 6, 10]
+
+voti.append(5)              # aggiunge in coda → [8, 7, 9, 6, 10, 5]
+voti.insert(0, 4)           # inserisce in posizione 0 → [4, 8, 7, 9, 6, 10, 5]
+voti.remove(7)              # elimina la prima occorrenza di 7
+ultimo = voti.pop()         # rimuove e restituisce l'ultimo elemento
+
+voti.sort()                 # ordina in loco
+voti.sort(reverse=True)     # ordine decrescente
+
+print(len(voti), sum(voti), min(voti), max(voti))
+```
+
+### Slicing: "fette" di lista
+
+`lista[inizio:fine:passo]` restituisce una **sottolista** (`inizio` incluso, `fine` escluso).
+
+```python
+numeri = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+print(numeri[2:5])       # [2, 3, 4]
+print(numeri[:3])        # [0, 1, 2]   dall'inizio
+print(numeri[7:])        # [7, 8, 9]   fino alla fine
+print(numeri[::2])       # [0, 2, 4, 6, 8]   uno sì uno no
+print(numeri[::-1])      # [9, 8, 7, ..., 0] inversa
+```
+
+### List comprehension
+
+Modo compatto per **costruire** una lista da un'iterazione. Equivalente a un `for` con `append`, ma più breve.
+
+```python
+# Quadrati dei primi 10 numeri
+quadrati = [n ** 2 for n in range(1, 11)]
+
+# Solo i pari
+pari = [n for n in range(20) if n % 2 == 0]
+
+# Coppie (i, j) con i ≠ j
+coppie = [(i, j) for i in "ABC" for j in "ABC" if i != j]
+```
+
+<Aside type="tip" title="Leggibilità">
+Le comprehension sono potenti ma possono diventare illeggibili. Se la condizione o la trasformazione è complessa, usa un `for` normale.
+</Aside>
+
+## Tuple
+
+Una tupla è una sequenza **ordinata** ma **immutabile**: una volta creata non si modifica. Si usa per **raggruppare valori** che logicamente stanno insieme.
+
+```python
+punto = (3, 4)
+colore = (255, 128, 0)
+
+x, y = punto                  # unpacking
+print(x, y)
+
+# punto[0] = 10               → TypeError: le tuple sono immutabili
+```
+
+<Aside type="note" title="Perché una tupla al posto di una lista?">
+- Comunica che quei valori **non devono cambiare**.
+- È **più veloce** da costruire e usa meno memoria.
+- Può essere usata come **chiave di un dizionario** (le liste no).
+</Aside>
+
+## Dizionari
+
+Un dizionario associa a ogni **chiave** un **valore**. Le chiavi devono essere immutabili (stringhe, numeri, tuple di immutabili).
+
+```python
+studente = {
+    "nome": "Luca",
+    "eta": 17,
+    "classe": "quarta",
+    "voti": [8, 7, 9],
+}
+
+print(studente["nome"])             # Luca
+print(studente.get("email"))        # None (non esiste, non solleva errore)
+print(studente.get("email", "-"))   # valore di fallback
+
+studente["email"] = "luca@scuola.it"   # aggiunge o aggiorna
+del studente["eta"]                     # elimina una chiave
+
+# Iterazione:
+for chiave, valore in studente.items():
+    print(f"{chiave}: {valore}")
+
+# Chiavi, valori, coppie:
+print(list(studente.keys()))
+print(list(studente.values()))
+```
+
+### Dizionari annidati
+
+```python
+registro = {
+    "Luca":  {"voti": [8, 7, 9], "classe": "quarta"},
+    "Anna":  {"voti": [9, 10],   "classe": "quarta"},
+    "Marco": {"voti": [6, 7, 5], "classe": "4IA"},
+}
+
+print(registro["Anna"]["voti"])
+```
+
+### Dict comprehension
+
+```python
+quadrati = {n: n ** 2 for n in range(1, 6)}
+# {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+```
+
+## Insiemi (`set`)
+
+Un `set` è una **collezione senza ordine** e **senza duplicati**. Perfetto quando interessa solo l'**appartenenza**.
+
+```python
+lingue = {"it", "en", "fr"}
+lingue.add("de")
+lingue.discard("fr")    # elimina se presente, senza errore se manca
+
+print("it" in lingue)   # True
+print(len(lingue))
+```
+
+### Operazioni insiemistiche
+
+```python
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+print(a | b)    # unione:         {1, 2, 3, 4, 5, 6}
+print(a & b)    # intersezione:   {3, 4}
+print(a - b)    # differenza:     {1, 2}
+print(a ^ b)    # differenza simmetrica: {1, 2, 5, 6}
+```
+
+Usi tipici: **rimuovere i duplicati** da una lista mantenendo solo i valori distinti.
+
+```python
+voti = [8, 7, 8, 9, 7, 6]
+distinti = list(set(voti))   # ordine non garantito
+```
+
+## Esempio completo · analisi parole di un testo
+
+```python
+testo = """Python è un linguaggio potente e leggibile.
+Python è usato ovunque: scripting, web, dati, intelligenza artificiale."""
+
+# Normalizzazione: minuscolo e caratteri di punteggiatura rimossi
+pulito = testo.lower()
+for ch in ".,:!?;\n":
+    pulito = pulito.replace(ch, " ")
+
+parole = pulito.split()
+
+conteggio = {}
+for p in parole:
+    conteggio[p] = conteggio.get(p, 0) + 1
+
+# Le 5 parole più frequenti
+top = sorted(conteggio.items(), key=lambda x: x[1], reverse=True)[:5]
+
+for parola, frequenza in top:
+    print(f"{parola}: {frequenza}")
+```
+
+## Da provare
+
+- Riscrivi l'analisi delle parole usando un `set` per contare quante parole **diverse** ci sono.
+- Trasforma il registro annidato di più sopra in una **list comprehension** che produca `[(nome, media)]`.

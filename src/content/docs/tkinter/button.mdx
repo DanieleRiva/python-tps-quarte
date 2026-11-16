@@ -1,0 +1,164 @@
+---
+title: Button - pulsanti
+description: Guida al widget Button di tkinter - opzioni, callback con command, passaggio di argomenti con lambda, stile e disabilitazione.
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Button` è il **pulsante cliccabile** più usato in tkinter. Quando l'utente lo preme, viene eseguita una funzione (detta *callback*) che hai collegato con l'opzione `command`.
+
+<Aside type="note" title="Quando usarlo">
+- Per **avviare un'azione**: salva, invia, calcola, chiudi.
+- Per **confermare** l'inserimento di dati in una form.
+- Dentro una toolbar o accanto a una `Listbox` per aggiungere o rimuovere voci.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `text` | Il testo del pulsante. |
+| `command` | Funzione da eseguire al click. Si passa **senza parentesi**. |
+| `font`, `fg`, `bg` | Carattere, colore testo, colore sfondo. |
+| `activebackground` | Colore di sfondo mentre il pulsante è premuto. |
+| `width`, `height` | Larghezza (caratteri) e altezza (righe). |
+| `padx`, `pady` | Spazio interno tra bordo e testo. |
+| `state` | `"normal"` (attivo) o `"disabled"` (grigio, non cliccabile). |
+| `relief` | `"flat"`, `"raised"`, `"sunken"`, `"ridge"`, `"solid"`, `"groove"`. |
+| `cursor` | Cursore sopra il pulsante: `"hand2"` è il classico "manina". |
+| `image` | Mostra un'immagine al posto o accanto al testo. |
+| `compound` | Dove mettere l'immagine rispetto al testo: `"left"`, `"right"`, `"top"`, `"bottom"`. |
+
+## Esempio 1 · Pulsante base
+
+```python
+import tkinter as tk
+
+
+def saluta():
+    print("Ciao!")
+
+
+finestra = tk.Tk()
+finestra.geometry("260x100")
+
+tk.Button(finestra, text="Saluta", command=saluta).pack(pady=20)
+
+finestra.mainloop()
+```
+
+<Aside type="caution" title="Senza parentesi!">
+Scrivere `command=saluta` collega la funzione al pulsante. Scrivere `command=saluta()` la **esegue subito** e passa il suo risultato (quasi sempre `None`), quindi il pulsante non farà più nulla al click.
+</Aside>
+
+## Esempio 2 · Passare argomenti con lambda
+
+A volte lo stesso pulsante deve chiamare una funzione **con un argomento diverso**. Soluzione: una `lambda`.
+
+```python
+import tkinter as tk
+
+
+def scegli_colore(colore):
+    finestra.config(bg=colore)
+
+
+finestra = tk.Tk()
+finestra.geometry("300x120")
+
+tk.Button(finestra, text="Rosso",  command=lambda: scegli_colore("tomato")).pack(side="left", padx=5)
+tk.Button(finestra, text="Verde",  command=lambda: scegli_colore("mediumseagreen")).pack(side="left", padx=5)
+tk.Button(finestra, text="Blu",    command=lambda: scegli_colore("dodgerblue")).pack(side="left", padx=5)
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Pulsante disabilitato
+
+Un pulsante può essere **disabilitato** finché non sono soddisfatte certe condizioni (es. finché l'utente non ha compilato tutti i campi).
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x150")
+
+campo = tk.Entry(finestra)
+campo.pack(pady=10)
+
+
+def controlla(*_):
+    if campo.get().strip():
+        bottone.config(state="normal")
+    else:
+        bottone.config(state="disabled")
+
+
+bottone = tk.Button(finestra, text="Invia", state="disabled")
+bottone.pack()
+
+campo.bind("<KeyRelease>", controlla)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Pulsante con stile personalizzato
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("280x120")
+
+tk.Button(
+    finestra,
+    text="Conferma",
+    font=("Arial", 12, "bold"),
+    fg="white",
+    bg="#1b4367",
+    activebackground="#0f2a46",
+    padx=20,
+    pady=8,
+    cursor="hand2",
+    relief="flat",
+).pack(pady=30)
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Più pulsanti e una funzione comune
+
+Un pattern utile: ogni pulsante passa un identificativo alla stessa funzione, che decide cosa fare.
+
+```python
+import tkinter as tk
+
+
+def azione(nome):
+    etichetta.config(text=f"Hai scelto: {nome}")
+
+
+finestra = tk.Tk()
+finestra.geometry("360x140")
+
+for nome in ["Pizza", "Pasta", "Insalata"]:
+    tk.Button(finestra, text=nome, width=10,
+              command=lambda n=nome: azione(n)).pack(side="left", padx=10, pady=20)
+
+etichetta = tk.Label(finestra, text="Scegli un piatto")
+etichetta.pack(side="bottom", pady=10)
+
+finestra.mainloop()
+```
+
+<Aside type="tip" title="Attenzione alla lambda nei cicli">
+Nel ciclo `for` sopra, scrivere `command=lambda: azione(nome)` è un errore classico: **tutti i pulsanti** finirebbero per usare l'ultimo valore di `nome`. Il trucco è legarlo come parametro di default: `lambda n=nome: azione(n)`.
+</Aside>
+
+## Errori comuni
+
+- **Il pulsante si attiva da solo all'avvio**: hai scritto `command=funzione()` con le parentesi. Rimuovile.
+- **Il pulsante non risponde**: il suo stato è `"disabled"` oppure la finestra non ha mai raggiunto `mainloop()`.
+- **Click lenti o interfaccia che si blocca**: la funzione collegata fa un'operazione lunga (es. un download). Spostala in un thread separato.

@@ -1,0 +1,190 @@
+---
+title: Listbox - elenco selezionabile
+description: Guida al widget Listbox di tkinter - inserire, rimuovere, selezionare voci, selezione multipla, scrollbar.
+sidebar:
+  order: 9
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Listbox` mostra una **lista di voci cliccabili**. È perfetto quando le opzioni sono tante (più dei radiobutton consentiti) o quando l'elenco è **dinamico** e cambia durante il programma.
+
+<Aside type="note" title="Quando usarlo">
+- Rubrica contatti, elenco task, lista brani.
+- Scelta di un file o cartella in un elenco custom.
+- Qualunque cosa debba mostrare righe aggiungibili/rimuovibili dall'utente.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `height` | Numero di righe visibili. |
+| `width` | Larghezza in caratteri. |
+| `font`, `fg`, `bg` | Carattere e colori. |
+| `selectmode` | `"single"` (una sola), `"browse"` (una sola, trascinabile, default), `"multiple"` (più voci con click), `"extended"` (più voci con Shift/Ctrl). |
+| `selectbackground` | Colore della voce selezionata. |
+| `yscrollcommand` | Collega una [Scrollbar](/tkinter/scrollbar/) verticale. |
+| `activestyle` | Stile della voce "attiva" (sotto il focus): `"none"`, `"underline"`, `"dotbox"`. |
+
+## Metodi principali
+
+| Metodo | Cosa fa |
+|---|---|
+| `.insert(indice, "voce")` | Aggiunge una voce. `tk.END` = in fondo. |
+| `.delete(da, a)` | Rimuove le voci tra `da` e `a` (`a` escluso se usi un indice numerico; con `tk.END` incluso). |
+| `.get(indice)` | Restituisce il testo della voce. |
+| `.size()` | Numero totale di voci. |
+| `.curselection()` | Tupla con gli **indici** delle voci selezionate (vuota se nessuna). |
+| `.selection_set(indice)` | Seleziona programmaticamente una voce. |
+| `.see(indice)` | Fa scorrere la vista fino a quella voce. |
+
+## Esempio 1 · Lista base con selezione
+
+```python
+import tkinter as tk
+
+
+def mostra_scelta():
+    selezione = elenco.curselection()
+    if not selezione:
+        return
+    testo = elenco.get(selezione[0])
+    etichetta.config(text=f"Hai scelto: {testo}")
+
+
+finestra = tk.Tk()
+finestra.geometry("260x220")
+
+elenco = tk.Listbox(finestra, height=6)
+for frutto in ["Mele", "Pere", "Banane", "Fragole", "Ananas"]:
+    elenco.insert(tk.END, frutto)
+elenco.pack(padx=10, pady=5)
+
+tk.Button(finestra, text="Conferma", command=mostra_scelta).pack(pady=5)
+etichetta = tk.Label(finestra, text="Nessuna selezione")
+etichetta.pack()
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Aggiungere e rimuovere voci
+
+```python
+import tkinter as tk
+
+
+def aggiungi():
+    valore = campo.get().strip()
+    if valore:
+        elenco.insert(tk.END, valore)
+        campo.delete(0, tk.END)
+
+
+def rimuovi():
+    selezione = elenco.curselection()
+    if selezione:
+        elenco.delete(selezione[0])
+
+
+finestra = tk.Tk()
+finestra.geometry("300x280")
+
+campo = tk.Entry(finestra, width=25)
+campo.pack(pady=5)
+
+bottoni = tk.Frame(finestra)
+bottoni.pack(pady=5)
+tk.Button(bottoni, text="Aggiungi", command=aggiungi).pack(side="left", padx=4)
+tk.Button(bottoni, text="Rimuovi",  command=rimuovi).pack(side="left", padx=4)
+
+elenco = tk.Listbox(finestra, height=10)
+elenco.pack(padx=10, pady=5, fill="both", expand=True)
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Selezione multipla
+
+Con `selectmode="extended"` l'utente può selezionare più voci tenendo **Ctrl** o **Shift**.
+
+```python
+import tkinter as tk
+
+
+def mostra_tutti():
+    scelti = [elenco.get(i) for i in elenco.curselection()]
+    print("Selezionati:", scelti)
+
+
+finestra = tk.Tk()
+finestra.geometry("260x260")
+
+elenco = tk.Listbox(finestra, height=8, selectmode="extended")
+for giorno in ["Lunedì", "Martedì", "Mercoledì", "Giovedì",
+               "Venerdì", "Sabato", "Domenica"]:
+    elenco.insert(tk.END, giorno)
+elenco.pack(padx=10, pady=10, fill="both", expand=True)
+
+tk.Button(finestra, text="Mostra selezione", command=mostra_tutti).pack(pady=5)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Reagire al doppio click
+
+```python
+import tkinter as tk
+
+
+def apri(evento):
+    selezione = elenco.curselection()
+    if selezione:
+        print("Doppio click su:", elenco.get(selezione[0]))
+
+
+finestra = tk.Tk()
+
+elenco = tk.Listbox(finestra, height=6)
+for nome in ["Alice", "Bruno", "Carla", "Davide", "Elisa"]:
+    elenco.insert(tk.END, nome)
+elenco.pack(padx=10, pady=10)
+
+elenco.bind("<Double-Button-1>", apri)
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Listbox con scrollbar
+
+Le voci sono tante? Metti una [Scrollbar](/tkinter/scrollbar/) accanto e collegala.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("260x200")
+
+cornice = tk.Frame(finestra)
+cornice.pack(padx=10, pady=10, fill="both", expand=True)
+
+elenco = tk.Listbox(cornice)
+elenco.pack(side="left", fill="both", expand=True)
+
+barra = tk.Scrollbar(cornice, command=elenco.yview)
+barra.pack(side="right", fill="y")
+
+elenco.config(yscrollcommand=barra.set)
+
+for i in range(1, 101):
+    elenco.insert(tk.END, f"Voce numero {i}")
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **`curselection()` restituisce tupla vuota**: non c'è nessuna selezione. Controlla sempre con `if selezione:` prima di indicizzare.
+- **`insert` non aggiunge in fondo**: hai passato un indice numerico che esisteva già (le voci successive si spostano in basso). Usa `tk.END` per "in fondo".
+- **La Listbox non riempie la finestra**: aggiungi `fill="both", expand=True` al `.pack()`.
+- **Non posso selezionare più voci**: il `selectmode` è `"browse"` (default). Mettilo a `"extended"` o `"multiple"`.

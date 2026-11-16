@@ -1,0 +1,225 @@
+---
+title: Moduli e libreria standard
+description: Organizzare il codice in moduli con import, from...import, as. Panoramica di os, math, random, datetime dalla libreria standard di Python.
+sidebar:
+  order: 8
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Che cos'è un modulo
+
+Un **modulo** è un file `.py` che contiene funzioni, variabili e classi. I moduli servono a:
+
+- **riutilizzare** codice scritto una volta in più programmi;
+- **suddividere** un progetto grande in file più piccoli e specializzati;
+- accedere all'immensa **libreria standard** già installata con Python.
+
+## Importare un modulo
+
+```python
+import math
+
+print(math.pi)
+print(math.sqrt(144))
+```
+
+Importare solo ciò che serve, con `from`:
+
+```python
+from math import pi, sqrt
+
+print(pi)
+print(sqrt(144))
+```
+
+Rinominare per comodità, con `as`:
+
+```python
+import datetime as dt
+
+adesso = dt.datetime.now()
+print(adesso)
+```
+
+<Aside type="caution" title="Evita `from modulo import *`">
+Importare tutto con `*` nasconde la provenienza dei nomi e può creare collisioni. Importa esplicitamente solo ciò che serve.
+</Aside>
+
+## Creare un proprio modulo
+
+Crea `utility.py`:
+
+```python
+# utility.py
+def saluta(nome):
+    return f"Ciao {nome}!"
+
+def media(valori):
+    return sum(valori) / len(valori)
+```
+
+Nello stesso progetto, da `main.py`:
+
+```python
+# main.py
+import utility
+
+print(utility.saluta("Luca"))
+print(utility.media([8, 7, 9]))
+```
+
+### Il controllo `__name__ == "__main__"`
+
+Permette a un file di comportarsi da **modulo** se importato e da **programma** se eseguito direttamente.
+
+```python
+# utility.py
+def saluta(nome):
+    return f"Ciao {nome}!"
+
+if __name__ == "__main__":
+    # Eseguito solo se lanci: python utility.py
+    print(saluta("mondo"))
+```
+
+## Un giro nella libreria standard
+
+### `math` - matematica
+
+```python
+import math
+
+print(math.sqrt(2))          # radice quadrata
+print(math.pow(2, 10))       # potenza (restituisce float)
+print(math.floor(3.7))       # 3
+print(math.ceil(3.2))        # 4
+print(math.pi, math.e)
+print(math.log(100, 10))     # logaritmo base 10
+print(math.gcd(12, 18))      # massimo comun divisore → 6
+```
+
+### `random` - numeri casuali
+
+```python
+import random
+
+print(random.random())                   # float in [0.0, 1.0)
+print(random.randint(1, 6))              # intero tra 1 e 6 (inclusi)
+print(random.uniform(0, 100))            # float tra 0 e 100
+print(random.choice(["pizza", "pasta", "riso"]))
+
+mazzo = [1, 2, 3, 4, 5]
+random.shuffle(mazzo)                    # mescola IN LOCO
+print(mazzo)
+
+print(random.sample(range(1, 91), 6))    # tombola: 6 numeri distinti
+```
+
+Per esperimenti ripetibili, **fissa il seme**:
+
+```python
+random.seed(42)
+```
+
+### `datetime` - date e orari
+
+```python
+from datetime import date, datetime, timedelta
+
+oggi = date.today()
+print(oggi)                         # 2026-11-16
+
+compleanno = date(2008, 5, 23)
+eta = (oggi - compleanno).days // 365
+print(f"Ha circa {eta} anni.")
+
+adesso = datetime.now()
+print(adesso.strftime("%d/%m/%Y %H:%M"))
+
+fra_una_settimana = adesso + timedelta(days=7)
+print(fra_una_settimana)
+```
+
+### `os` - interagire con il sistema operativo
+
+```python
+import os
+
+print(os.getcwd())               # cartella di lavoro corrente
+print(os.listdir("."))           # elenco file nella cartella
+print(os.path.exists("foto.jpg"))
+
+# Costruire percorsi multipiattaforma:
+percorso = os.path.join("dati", "voti.csv")
+print(percorso)
+
+# Variabili d'ambiente:
+print(os.environ.get("USERNAME", "sconosciuto"))
+```
+
+<Aside type="tip" title="pathlib: alternativa moderna">
+Per lavorare con percorsi, oggi si preferisce spesso `pathlib`:
+
+```python
+from pathlib import Path
+
+base = Path(__file__).parent
+dati = base / "dati" / "voti.csv"
+print(dati.exists())
+```
+</Aside>
+
+## Installare pacchetti con `pip`
+
+I pacchetti **esterni** (non nella libreria standard) si installano con `pip`:
+
+```bash
+pip install requests
+pip install pyqt6
+```
+
+Per sapere cosa hai installato:
+
+```bash
+pip list
+```
+
+Per salvare le dipendenze di un progetto:
+
+```bash
+pip freeze > requirements.txt
+pip install -r requirements.txt    # su un altro computer
+```
+
+## Esempio completo · estrattore di quiz
+
+```python
+import random
+from datetime import datetime
+
+domande = [
+    ("Qual è il tipo di dato per una coppia immutabile?", "tuple"),
+    ("Qual è l'operatore di appartenenza?", "in"),
+    ("Quale funzione legge una riga dal terminale?", "input"),
+]
+
+random.seed(datetime.now().microsecond)
+random.shuffle(domande)
+
+giusti = 0
+for testo, risposta in domande:
+    data = input(f"\n{testo}\n> ").strip().lower()
+    if data == risposta:
+        print("Giusto!")
+        giusti += 1
+    else:
+        print(f"Sbagliato. Era: {risposta}")
+
+print(f"\nPunteggio: {giusti}/{len(domande)}")
+```
+
+## Da provare
+
+- Metti la lista di domande in un **modulo separato** `quiz_dati.py` e importala.
+- Usa `datetime` per salvare l'ora di inizio e fine del quiz e stampa il **tempo impiegato**.

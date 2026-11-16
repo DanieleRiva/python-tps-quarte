@@ -1,0 +1,146 @@
+---
+title: Label - etichette di testo
+description: Guida al widget Label di tkinter - opzioni, esempi progressivi, uso di textvariable, immagini e multi-riga.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Label` serve a **mostrare del testo** (o una piccola immagine) all'utente. È il widget più semplice e si usa ovunque: titoli, istruzioni, risultati di un calcolo, messaggi di stato.
+
+<Aside type="note" title="Quando usarlo">
+- Per **titoli** e **intestazioni** all'interno della finestra.
+- Per **spiegare a cosa serve** un campo `Entry` ("Nome:", "Email:").
+- Per **mostrare il risultato** di un'operazione (punteggio, somma, orario).
+- Per **messaggi di stato** che cambiano nel tempo (es. "Salvataggio in corso…").
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `text` | Il testo da mostrare. Può contenere `\n` per andare a capo. |
+| `textvariable` | Collega il testo a una `StringVar`: quando la variabile cambia, l'etichetta si aggiorna da sola. |
+| `font` | Tipo e dimensione del carattere: `("Arial", 14, "bold")`. |
+| `fg` | Colore del testo (nome o `#rrggbb`). |
+| `bg` | Colore di sfondo. |
+| `padx`, `pady` | Spazio **interno** tra bordo e testo, in pixel. |
+| `width`, `height` | Larghezza e altezza **in caratteri**, non in pixel. |
+| `anchor` | Allineamento del testo: `"w"` (sinistra), `"center"`, `"e"` (destra), `"n"`, `"s"`. |
+| `justify` | Allineamento quando il testo è su più righe: `"left"`, `"center"`, `"right"`. |
+| `image` | Mostra un'immagine (`tk.PhotoImage`) al posto del testo. |
+| `relief` | Stile del bordo: `"flat"`, `"ridge"`, `"solid"`, `"groove"`. |
+| `cursor` | Forma del cursore sopra l'etichetta: `"hand2"`, `"arrow"`, ecc. |
+
+## Esempio 1 · La label più semplice
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x80")
+
+tk.Label(finestra, text="Ciao, mondo!").pack(pady=20)
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Font, colori e padding
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("360x120")
+
+tk.Label(
+    finestra,
+    text="Titolo in evidenza",
+    font=("Arial", 18, "bold"),
+    fg="white",
+    bg="#1b4367",
+    padx=20,
+    pady=10,
+).pack(pady=20)
+
+finestra.mainloop()
+```
+
+Le opzioni `padx`/`pady` lasciano spazio **dentro** l'etichetta tra il bordo e il testo: utile per far respirare i titoli.
+
+## Esempio 3 · Testo che cambia con StringVar
+
+Quando il testo dell'etichetta deve aggiornarsi in risposta a un pulsante o a un calcolo, conviene usare una `StringVar` collegata con `textvariable`: non serve chiamare `.config(text=...)` ogni volta.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x140")
+
+stato = tk.StringVar(value="In attesa…")
+contatore = 0
+
+
+def clicca():
+    global contatore
+    contatore += 1
+    stato.set(f"Click numero {contatore}")
+
+
+tk.Label(finestra, textvariable=stato, font=("Arial", 14)).pack(pady=20)
+tk.Button(finestra, text="Clicca", command=clicca).pack()
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Testo su più righe e allineamento
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("320x160")
+
+messaggio = (
+    "Benvenuto nell'applicazione!\n"
+    "Inserisci i tuoi dati nel modulo\n"
+    "e premi 'Invia' per continuare."
+)
+
+tk.Label(
+    finestra,
+    text=messaggio,
+    justify="left",       # righe allineate a sinistra
+    anchor="w",            # intera label allineata a sinistra nel contenitore
+    padx=15,
+    pady=15,
+).pack(fill="x")
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Label con immagine
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+# Il file deve stare nella stessa cartella dello script
+immagine = tk.PhotoImage(file="logo.png")
+tk.Label(finestra, image=immagine).pack(padx=20, pady=20)
+
+finestra.mainloop()
+```
+
+<Aside type="caution" title="Attenzione a PhotoImage">
+`tk.PhotoImage` supporta solo **PNG** e **GIF**. Per JPEG serve la libreria `Pillow`. Inoltre devi **mantenere un riferimento** all'immagine (es. in una variabile globale): se la lasci cadere, Python la cancella e l'etichetta resta vuota.
+</Aside>
+
+## Errori comuni
+
+- **Il testo non si aggiorna**: stai cambiando una variabile ma non l'etichetta. Soluzione: usa `textvariable=StringVar` **oppure** chiama `etichetta.config(text=nuovo_testo)`.
+- **L'etichetta è troppo piccola**: `width` e `height` si misurano in **caratteri**, non pixel. Per riempire tutta la riga usa `.pack(fill="x")`.
+- **Il colore di sfondo non si vede**: hai impostato `bg` ma il widget è piccolo. Aggiungi `padx`/`pady` o un `width` maggiore.

@@ -1,0 +1,187 @@
+---
+title: Variabili e tipi di dato
+description: Dichiarazione di variabili, tipi di dato predefiniti (int, float, str, bool, list, tuple, dict, set), casting esplicito e gestione di input/output.
+sidebar:
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Dichiarare una variabile
+
+In Python una variabile si crea nel momento in cui le si assegna un valore. Non si dichiara il tipo: viene **dedotto** dal valore (*tipizzazione dinamica*).
+
+```python
+eta = 17                # int
+altezza = 1.78          # float
+nome = "Giulia"         # str
+maggiorenne = False     # bool
+
+print(nome, eta, altezza, maggiorenne)
+```
+
+<Aside type="note" title="Nomi delle variabili">
+Lettere, cifre e `_`, non devono iniziare con una cifra, sono *case-sensitive* (`totale` ≠ `Totale`). Per convenzione si usa lo stile `snake_case` e nomi significativi: `prezzo_totale`, non `pt`.
+</Aside>
+
+## I tipi di dato predefiniti
+
+### Numerici: `int` e `float`
+
+```python
+numero = 42             # intero
+pi = 3.14159            # virgola mobile
+grande = 10_000_000     # il _ migliora la leggibilità
+print(type(numero))     # <class 'int'>
+```
+
+Python gestisce interi di **precisione arbitraria**: non c'è overflow.
+
+```python
+print(2 ** 100)         # 1267650600228229401496703205376
+```
+
+### Testo: `str`
+
+Le stringhe si delimitano con apici singoli o doppi, le stringhe su più righe con `"""`:
+
+```python
+saluto = "Ciao"
+racconto = """Era una
+notte buia e tempestosa."""
+```
+
+Operazioni comuni sulle stringhe:
+
+```python
+nome = "Giulia"
+print(len(nome))            # 6 caratteri
+print(nome.upper())         # "GIULIA"
+print(nome[0], nome[-1])    # "G", "a"
+print(nome[0:3])            # "Giu" (slicing)
+print("Giu" in nome)        # True
+```
+
+Le **f-string** permettono di inserire espressioni dentro una stringa:
+
+```python
+eta = 17
+print(f"{nome} ha {eta} anni e fra 3 ne avrà {eta + 3}.")
+```
+
+### Booleani: `bool`
+
+Due soli valori: `True` e `False`. Sono usati nelle condizioni.
+
+```python
+maggiorenne = eta >= 18
+print(maggiorenne)      # False
+```
+
+Qualsiasi valore può essere interpretato come booleano: `0`, `0.0`, `""`, `[]`, `{}`, `None` sono *falsy*; tutto il resto è *truthy*.
+
+### Collezioni: liste, tuple, dizionari, set
+
+```python
+voti = [8, 7, 9, 6, 10]                # list: ordinata e modificabile
+coordinate = (45.5, 9.2)               # tuple: ordinata e IMMUTABILE
+studente = {"nome": "Luca", "eta": 17} # dict: coppie chiave/valore
+lingue = {"it", "en", "fr"}            # set: insieme senza duplicati
+
+voti.append(5)
+print(studente["nome"])
+print("de" in lingue)                  # False
+```
+
+Approfondiremo queste strutture nella pagina [Strutture dati](/strutture/).
+
+### Il valore `None`
+
+`None` rappresenta l'**assenza di valore**. Si usa quando una variabile esiste ma non ha ancora un valore significativo, o come valore di ritorno di funzioni che non restituiscono nulla.
+
+```python
+risultato = None
+if risultato is None:
+    print("Nessun risultato disponibile.")
+```
+
+## Conoscere il tipo
+
+```python
+print(type(3))          # <class 'int'>
+print(type(3.0))        # <class 'float'>
+print(isinstance(3, int))   # True
+```
+
+## Casting esplicito (conversione di tipo)
+
+Quando serve trasformare un valore da un tipo all'altro si usano le funzioni `int()`, `float()`, `str()`, `bool()`, `list()`, `tuple()`, `set()`.
+
+```python
+s = "42"
+n = int(s)              # da str a int → 42
+f = float(s)            # da str a float → 42.0
+
+prezzo = 9.9
+testo = f"Costa {prezzo} €"   # i numeri si formattano direttamente
+
+# Attenzione a stringhe non numeriche:
+# int("ciao")  → ValueError
+```
+
+<Aside type="caution" title="Virgola o punto?">
+Per i decimali Python usa il **punto**: `float("3,14")` solleva un errore; va scritto `float("3.14")`. Per leggere decimali in formato italiano, sostituisci prima la virgola: `float(testo.replace(",", "."))`.
+</Aside>
+
+## Input dall'utente
+
+La funzione `input()` legge **sempre una stringa** dal terminale. Se serve un numero, va convertito.
+
+```python
+nome = input("Come ti chiami? ")
+anni = int(input("Quanti anni hai? "))
+
+print(f"{nome}, fra 10 anni avrai {anni + 10} anni.")
+```
+
+## Output e `print()`
+
+```python
+print("Riga 1")
+print("A", "B", "C", sep=" · ")       # A · B · C
+print("senza a capo", end=" ")        # non manda a capo
+print("segue sulla stessa riga")
+```
+
+Formattazione numerica nelle f-string:
+
+```python
+pi = 3.14159265
+print(f"{pi:.2f}")      # 3.14
+print(f"{1250:>6d}")    # "  1250" (allineato a destra in 6 caratteri)
+print(f"{0.085:.1%}")   # 8.5%
+```
+
+## Esempio completo · media dei voti
+
+```python
+# Chiede 5 voti, calcola la media e giudica.
+somma = 0
+for i in range(5):
+    voto = float(input(f"Voto {i + 1}: ").replace(",", "."))
+    somma += voto
+
+media = somma / 5
+
+if media >= 6:
+    esito = "Sufficiente"
+else:
+    esito = "Insufficiente"
+
+print(f"\nMedia: {media:.2f} - {esito}")
+```
+
+## Da provare
+
+- Modifica l'esempio per chiedere **quanti voti** inserire e usare quel numero come limite.
+- Aggiungi un controllo: se l'utente scrive una lettera invece di un numero, il programma non deve andare in crash (useremo `try/except` nella pagina [File ed eccezioni](/file/)).

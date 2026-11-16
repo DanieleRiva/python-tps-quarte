@@ -1,0 +1,170 @@
+---
+title: Entry - campo di testo
+description: Guida al widget Entry di tkinter - leggere una riga di testo, StringVar, validazione, campo password e invio con Return.
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Entry` è il classico **campo a una riga** in cui l'utente scrive del testo: un nome, un numero, un indirizzo email. Per testo su più righe si usa invece [Text](/tkinter/text/).
+
+<Aside type="note" title="Quando usarlo">
+- Per **moduli** di inserimento dati (rubrica, login, convertitore).
+- Per **leggere un numero** dall'utente (ricordati di convertirlo con `int()` o `float()`).
+- Come **campo password** usando `show="*"`.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `textvariable` | Collega il campo a una `StringVar`: lettura/scrittura senza chiamare `.get()`. |
+| `width` | Larghezza **in caratteri** (non pixel). |
+| `font`, `fg`, `bg` | Carattere, colore testo, colore sfondo. |
+| `show` | Carattere da mostrare al posto del testo digitato (es. `"*"` per password). |
+| `state` | `"normal"`, `"disabled"`, `"readonly"`. |
+| `justify` | Allineamento del testo: `"left"`, `"center"`, `"right"`. |
+| `validate` + `validatecommand` | Validazione live di ciò che l'utente digita. |
+| `cursor` | Forma del cursore del mouse sopra il campo. |
+
+## Metodi principali
+
+| Metodo | Cosa fa |
+|---|---|
+| `.get()` | Restituisce il contenuto attuale come stringa. |
+| `.insert(indice, "testo")` | Inserisce del testo alla posizione data (`0` = inizio, `tk.END` = fine). |
+| `.delete(da, a)` | Cancella una porzione (`0, tk.END` cancella tutto). |
+| `.focus()` | Porta il cursore dentro il campo. |
+| `.select_range(0, tk.END)` | Seleziona tutto il contenuto. |
+
+## Esempio 1 · Lettura semplice
+
+```python
+import tkinter as tk
+
+
+def mostra():
+    testo = campo.get()
+    etichetta.config(text=f"Hai scritto: {testo}")
+
+
+finestra = tk.Tk()
+finestra.geometry("300x140")
+
+campo = tk.Entry(finestra, width=25)
+campo.pack(pady=10)
+
+tk.Button(finestra, text="Mostra", command=mostra).pack()
+etichetta = tk.Label(finestra, text="")
+etichetta.pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Confermare con il tasto Invio
+
+```python
+import tkinter as tk
+
+
+def conferma(evento=None):
+    etichetta.config(text=f"Ciao {campo.get() or 'sconosciuto'}!")
+    campo.delete(0, tk.END)
+
+
+finestra = tk.Tk()
+finestra.geometry("300x150")
+
+tk.Label(finestra, text="Come ti chiami?").pack(pady=5)
+
+campo = tk.Entry(finestra, width=25)
+campo.pack(pady=5)
+campo.focus()
+campo.bind("<Return>", conferma)   # il tasto Invio chiama conferma
+
+tk.Button(finestra, text="OK", command=conferma).pack(pady=5)
+etichetta = tk.Label(finestra, text="")
+etichetta.pack(pady=5)
+
+finestra.mainloop()
+```
+
+`campo.bind("<Return>", conferma)` fa sì che premere **Invio** dentro il campo chiami la stessa funzione del pulsante.
+
+## Esempio 3 · Campo password
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x120")
+
+tk.Label(finestra, text="Password:").pack()
+
+password = tk.Entry(finestra, show="*", width=25)
+password.pack(pady=5)
+
+tk.Button(finestra, text="Entra",
+          command=lambda: print("Password:", password.get())).pack()
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Entry collegato a StringVar
+
+Se devi leggere e scrivere spesso il contenuto, una `StringVar` è più comoda di `.get()`/`.insert()`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("320x120")
+
+nome = tk.StringVar(value="Mario")
+
+tk.Entry(finestra, textvariable=nome, width=25).pack(pady=10)
+tk.Label(finestra, textvariable=nome, font=("Arial", 14)).pack()
+
+tk.Button(finestra, text="Svuota",
+          command=lambda: nome.set("")).pack(pady=5)
+
+finestra.mainloop()
+```
+
+L'etichetta e il campo mostrano **lo stesso valore** e si aggiornano insieme.
+
+## Esempio 5 · Validazione: solo cifre
+
+A volte vuoi impedire all'utente di digitare caratteri non validi. La funzione di validazione deve restituire `True` (accetta) o `False` (rifiuta).
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("280x120")
+
+
+def solo_cifre(nuovo_testo):
+    return nuovo_testo == "" or nuovo_testo.isdigit()
+
+
+controllo = finestra.register(solo_cifre)
+
+tk.Label(finestra, text="Età:").pack()
+tk.Entry(
+    finestra,
+    validate="key",
+    validatecommand=(controllo, "%P"),  # %P = contenuto dopo la modifica
+    width=10,
+).pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **`entry.get()` restituisce `""`**: hai letto il valore **dopo** aver cancellato il campo o **prima** che l'utente digitasse. Rileggi dentro la callback del pulsante.
+- **Numero trattato come testo**: `Entry.get()` è sempre una **stringa**. Per fare calcoli converti con `int()` o `float()` dentro un `try/except`.
+- **Il campo non riceve il focus all'avvio**: chiama `campo.focus()` dopo averlo creato.
+- **La validazione non parte**: hai dimenticato di registrare la funzione con `finestra.register(...)`.

@@ -1,0 +1,160 @@
+---
+title: Grid - layout a griglia
+description: Guida al layout manager grid di tkinter - row, column, sticky, columnspan, rowspan, resize con rowconfigure e columnconfigure.
+sidebar:
+  order: 21
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`grid` è il layout manager **più potente** di tkinter: sistema i widget in una **griglia** di righe e colonne. È la scelta giusta per **moduli** (etichetta a sinistra, campo a destra), **calcolatrici**, **tabelle** di pulsanti.
+
+<Aside type="note" title="Quando usarlo">
+- **Form** con etichette e campi su più righe.
+- **Calcolatrici** o **tastierini**.
+- Qualunque layout rettangolare in cui gli elementi devono essere allineati verticalmente e orizzontalmente.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `row` | Riga (parte da 0). |
+| `column` | Colonna (parte da 0). |
+| `rowspan` | Quante righe occupa il widget. |
+| `columnspan` | Quante colonne occupa. |
+| `sticky` | A quali lati della cella il widget si "appiccica": `"n"`, `"s"`, `"e"`, `"w"` e combinazioni. `"nsew"` riempie la cella. |
+| `padx`, `pady` | Spazio **esterno** attorno al widget. |
+| `ipadx`, `ipady` | Spazio **interno**. |
+
+## Esempio 1 · Modulo di contatto
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.title("Modulo")
+finestra.geometry("320x180")
+
+tk.Label(finestra, text="Nome:").grid(row=0, column=0, sticky="e", padx=5, pady=5)
+tk.Entry(finestra, width=25).grid(row=0, column=1, padx=5, pady=5)
+
+tk.Label(finestra, text="Email:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+tk.Entry(finestra, width=25).grid(row=1, column=1, padx=5, pady=5)
+
+tk.Label(finestra, text="Messaggio:").grid(row=2, column=0, sticky="ne", padx=5, pady=5)
+tk.Text(finestra, width=25, height=4).grid(row=2, column=1, padx=5, pady=5)
+
+tk.Button(finestra, text="Invia").grid(row=3, column=1, sticky="e", padx=5, pady=10)
+
+finestra.mainloop()
+```
+
+`sticky="e"` incolla l'etichetta al bordo destro della cella: così le etichette vengono allineate a destra, vicino ai campi.
+
+## Esempio 2 · Occupare più celle con columnspan
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+tk.Label(finestra, text="Titolo in alto",
+         font=("Arial", 14, "bold")).grid(row=0, column=0, columnspan=3, pady=10)
+
+tk.Button(finestra, text="A").grid(row=1, column=0, padx=5, pady=5)
+tk.Button(finestra, text="B").grid(row=1, column=1, padx=5, pady=5)
+tk.Button(finestra, text="C").grid(row=1, column=2, padx=5, pady=5)
+
+tk.Button(finestra, text="OK su due colonne").grid(row=2, column=0, columnspan=2,
+                                                     sticky="ew", padx=5, pady=5)
+tk.Button(finestra, text="Annulla").grid(row=2, column=2, padx=5, pady=5)
+
+finestra.mainloop()
+```
+
+`sticky="ew"` fa sì che il widget si estenda dal lato est a quello ovest: riempie orizzontalmente il suo "spazio" (le colonne occupate).
+
+## Esempio 3 · Calcolatrice con grid
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.title("Calcolatrice")
+
+display = tk.Entry(finestra, justify="right", font=("Arial", 16))
+display.grid(row=0, column=0, columnspan=4, sticky="ew", padx=5, pady=5, ipady=6)
+
+tasti = [
+    ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
+    ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
+    ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
+    ("0", 4, 0), (".", 4, 1), ("=", 4, 2), ("+", 4, 3),
+]
+
+for testo, r, c in tasti:
+    tk.Button(finestra, text=testo, width=5, height=2,
+              command=lambda t=testo: display.insert(tk.END, t)
+    ).grid(row=r, column=c, padx=2, pady=2)
+
+finestra.mainloop()
+```
+
+## `sticky`: la chiave per capire grid
+
+Ogni cella della griglia ha una sua dimensione; il widget può stare in un angolo o riempire la cella. `sticky` elenca a quali lati si "appiccica".
+
+| Valore | Effetto |
+|---|---|
+| `""` o niente | Centrato nella cella. |
+| `"n"` / `"s"` / `"e"` / `"w"` | Attaccato a un lato. |
+| `"ns"` | Si allunga in verticale. |
+| `"ew"` | Si allunga in orizzontale. |
+| `"nsew"` | Riempie tutta la cella. |
+
+## Ridimensionamento con `rowconfigure` e `columnconfigure`
+
+Di default le celle **non crescono** quando ridimensioni la finestra: lo spazio in più finisce fuori dalla griglia. Per dire a una riga/colonna di prendersi lo spazio extra si usa `weight`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("400x260")
+
+# Fai crescere la colonna 1 e la riga 1
+finestra.columnconfigure(1, weight=1)
+finestra.rowconfigure(1, weight=1)
+
+tk.Label(finestra, text="Titolo",
+         font=("Arial", 14, "bold")).grid(row=0, column=0, columnspan=2, pady=5)
+
+tk.Label(finestra, text="Elenco:").grid(row=1, column=0, sticky="nw", padx=5)
+elenco = tk.Listbox(finestra)
+elenco.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+for v in ["Uno", "Due", "Tre", "Quattro"]:
+    elenco.insert(tk.END, v)
+
+tk.Button(finestra, text="OK").grid(row=2, column=1, sticky="e", padx=5, pady=5)
+
+finestra.mainloop()
+```
+
+Con `weight=1` quella riga/colonna **assorbe** lo spazio libero. Se più righe hanno `weight`, se lo spartiscono in proporzione ai valori.
+
+<Aside type="tip" title="Trucco per celle di dimensione uguale">
+Dai lo stesso `weight` (es. `1`) a tutte le colonne che vuoi equispaziate: `uniform="col"` può aiutare a forzare l'uniformità:
+
+```python
+for c in range(4):
+    finestra.columnconfigure(c, weight=1, uniform="col")
+```
+</Aside>
+
+## Errori comuni
+
+- **I widget sembrano "sparire"**: hai scritto `row=1` due volte sulla stessa colonna: il secondo widget copre il primo.
+- **La finestra non si espande**: manca `rowconfigure`/`columnconfigure` con `weight`.
+- **Le etichette non sono allineate**: senza `sticky="e"` restano centrate nella loro cella.
+- **`cannot use geometry manager grid inside …`**: stai mischiando `grid` e `pack` nello stesso contenitore. Scegline uno.

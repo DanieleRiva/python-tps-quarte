@@ -1,0 +1,145 @@
+---
+title: Pack - layout a impilamento
+description: Guida al layout manager pack di tkinter - side, fill, expand, anchor, padding, errori comuni e quando usarlo.
+sidebar:
+  order: 20
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+`pack` è il layout manager **più semplice** di tkinter: impila i widget uno dopo l'altro lungo un lato del contenitore. Perfetto per interfacce lineari: toolbar, finestre a colonna singola, barre di stato.
+
+<Aside type="note" title="Quando usarlo">
+- Layout **lineari**: tutto in colonna, tutto in riga.
+- **Barre superiori o inferiori** di un'app (intestazione, footer).
+- **Combinato con `Frame`**: ogni frame è una sezione impilata con pack, al suo interno puoi usare pack o grid.
+</Aside>
+
+## Opzioni principali
+
+| Opzione | Valori | A cosa serve |
+|---|---|---|
+| `side` | `"top"` (default), `"bottom"`, `"left"`, `"right"` | Lato del contenitore a cui il widget si "incolla". |
+| `fill` | `"x"`, `"y"`, `"both"`, `"none"` (default) | Se il widget deve allargarsi orizzontalmente, verticalmente o entrambi. |
+| `expand` | `True`, `False` (default) | Se può occupare lo **spazio libero** residuo. |
+| `anchor` | `"n"`, `"s"`, `"e"`, `"w"`, `"center"`, combinazioni | Dove si posiziona dentro lo spazio assegnato. |
+| `padx`, `pady` | int | Spazio **esterno** attorno al widget. |
+| `ipadx`, `ipady` | int | Spazio **interno** (ingrandisce il widget). |
+
+## Come funziona `side`
+
+Ogni widget "occupa un lato" del contenitore. Lo spazio rimasto è il nuovo "contenitore" per il widget successivo.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+tk.Label(finestra, text="TOP",    bg="#f77").pack(side="top",    fill="x")
+tk.Label(finestra, text="BOTTOM", bg="#7f7").pack(side="bottom", fill="x")
+tk.Label(finestra, text="LEFT",   bg="#77f").pack(side="left",   fill="y")
+tk.Label(finestra, text="RIGHT",  bg="#ff7").pack(side="right",  fill="y")
+tk.Label(finestra, text="RESTO",  bg="#eee").pack(fill="both", expand=True)
+
+finestra.mainloop()
+```
+
+L'ordine in cui chiami `.pack()` conta: il primo prende il suo lato per intero, il secondo prende il lato nello spazio rimasto, e così via.
+
+## `fill` ed `expand`
+
+- `fill` dice al widget di **occupare** la dimensione disponibile nel senso richiesto (`"x"` = larghezza, `"y"` = altezza, `"both"` = entrambe).
+- `expand=True` dice al widget che quando la finestra viene ridimensionata, il suo **spazio** può crescere.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+tk.Label(finestra, text="header", bg="#1b4367", fg="white").pack(fill="x")
+tk.Label(finestra, text="corpo",  bg="white").pack(fill="both", expand=True)
+tk.Label(finestra, text="footer", bg="#333", fg="white").pack(fill="x")
+
+finestra.mainloop()
+```
+
+Prova ad allargare la finestra: solo il corpo cresce perché è l'unico con `expand=True`.
+
+## `anchor`: dove sta il widget nello spazio assegnato
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x150")
+
+tk.Label(finestra, text="A sinistra", bg="#eef").pack(fill="x", anchor="w")
+tk.Label(finestra, text="Centrato",   bg="#efe").pack(fill="x", anchor="center")
+tk.Label(finestra, text="A destra",   bg="#fee").pack(fill="x", anchor="e")
+
+finestra.mainloop()
+```
+
+## Padding interno ed esterno
+
+| Opzione | Effetto |
+|---|---|
+| `padx`, `pady` | Spazio **fuori** dal widget, verso gli altri widget. |
+| `ipadx`, `ipady` | Spazio **dentro** il widget, lo ingrandisce rispetto al contenuto. |
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+tk.Button(finestra, text="Senza padding").pack()
+tk.Button(finestra, text="padx/pady").pack(padx=20, pady=20)
+tk.Button(finestra, text="ipadx/ipady").pack(ipadx=20, ipady=10)
+
+finestra.mainloop()
+```
+
+## Esempio completo · Toolbar + corpo + status bar
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("400x260")
+
+# Toolbar in alto
+toolbar = tk.Frame(finestra, bg="#eeeeee")
+toolbar.pack(side="top", fill="x")
+tk.Button(toolbar, text="Nuovo").pack(side="left", padx=2, pady=2)
+tk.Button(toolbar, text="Apri").pack(side="left", padx=2, pady=2)
+tk.Button(toolbar, text="Salva").pack(side="left", padx=2, pady=2)
+
+# Status bar in basso
+stato = tk.Label(finestra, text=" Pronto", anchor="w", bg="#ddd")
+stato.pack(side="bottom", fill="x")
+
+# Corpo centrale che riempie tutto
+corpo = tk.Text(finestra)
+corpo.pack(fill="both", expand=True)
+corpo.insert("1.0", "Area di lavoro…")
+
+finestra.mainloop()
+```
+
+## Pack vs grid
+
+- Usa **pack** quando il layout è **lineare**: tutto in colonna o tutto in riga.
+- Usa [grid](/tkinter/grid/) quando ci sono **righe e colonne** (moduli con etichette + campi).
+
+<Aside type="caution" title="Non mescolare nello stesso contenitore">
+Dentro **lo stesso Frame** puoi usare solo pack **o** grid, non entrambi. In contenitori diversi puoi usarli come vuoi.
+</Aside>
+
+## Errori comuni
+
+- **Il widget non appare**: ti sei scordato `.pack()`.
+- **Due widget "spariti" sullo stesso lato**: il primo ha `fill="y"` e `expand=True`, occupa tutto lo spazio. Il secondo è messo accanto ma la finestra non ce la fa. Soluzione: dare `expand` solo al widget che deve crescere.
+- **Programma bloccato con `cannot use geometry manager pack inside …`**: stai mischiando pack e grid nello stesso contenitore. Scegline uno.
+- **Il bottone al centro non è al centro della finestra**: senza `expand=True` il widget resta attaccato al proprio lato. Aggiungi `expand=True` e `anchor="center"`.

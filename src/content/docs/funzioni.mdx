@@ -1,0 +1,226 @@
+---
+title: Funzioni
+description: Definizione di funzioni con def, parametri posizionali e di default, return, *args e **kwargs, funzioni lambda, scope delle variabili.
+sidebar:
+  order: 5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Perché scrivere funzioni
+
+Una **funzione** è un blocco di codice che si può richiamare più volte. Scriverle serve a:
+
+- **evitare ripetizioni** (principio *DRY - Don't Repeat Yourself*);
+- **dare un nome** a un'operazione, rendendo il programma più leggibile;
+- **isolare un pezzo di logica** che può essere testato e modificato in autonomia.
+
+## La parola chiave `def`
+
+```python
+def saluta(nome):
+    print(f"Ciao {nome}!")
+
+saluta("Giulia")
+saluta("Luca")
+```
+
+Una funzione che non usa `return` restituisce implicitamente `None`.
+
+### Restituire un valore
+
+```python
+def area_rettangolo(base, altezza):
+    return base * altezza
+
+a = area_rettangolo(5, 3)
+print(a)             # 15
+```
+
+### Più valori di ritorno
+
+Python permette di restituire una tupla, che spesso si **spacchetta** direttamente nell'assegnazione:
+
+```python
+def min_max(valori):
+    return min(valori), max(valori)
+
+minimo, massimo = min_max([4, 1, 9, 2])
+print(minimo, massimo)   # 1 9
+```
+
+## Parametri
+
+### Posizionali e di default
+
+```python
+def potenza(base, esponente=2):
+    return base ** esponente
+
+print(potenza(5))           # 25 (esponente di default = 2)
+print(potenza(5, 3))        # 125
+print(potenza(esponente=3, base=5))   # argomenti per nome
+```
+
+### Numero variabile di argomenti: `*args` e `**kwargs`
+
+```python
+def somma(*numeri):             # tupla di argomenti posizionali
+    totale = 0
+    for n in numeri:
+        totale += n
+    return totale
+
+print(somma(1, 2, 3))           # 6
+print(somma(1, 2, 3, 4, 5))     # 15
+
+
+def profilo(**campi):           # dizionario di argomenti con nome
+    for chiave, valore in campi.items():
+        print(f"{chiave}: {valore}")
+
+profilo(nome="Luca", eta=17, classe="quarta")
+```
+
+### Unpacking nelle chiamate
+
+```python
+coordinate = (3, 4)
+
+def distanza(x, y):
+    return (x ** 2 + y ** 2) ** 0.5
+
+print(distanza(*coordinate))    # sposta gli elementi come argomenti
+```
+
+<Aside type="caution" title="Default mutabili: trabocchetto classico">
+Come valore di default di un parametro **non si usano mai oggetti mutabili** (liste, dizionari, set): il default viene creato **una sola volta**, alla definizione della funzione, e poi riutilizzato ad ogni chiamata. Il risultato è che le modifiche si accumulano fra chiamate diverse.
+
+```python
+# ❌ SBAGLIATO
+def aggiungi(elemento, lista=[]):
+    lista.append(elemento)
+    return lista
+
+print(aggiungi(1))   # [1]
+print(aggiungi(2))   # [1, 2]  ← la lista è la stessa!
+print(aggiungi(3))   # [1, 2, 3]
+```
+
+Il pattern corretto è usare `None` come default e creare la lista **dentro** la funzione:
+
+```python
+# ✅ CORRETTO
+def aggiungi(elemento, lista=None):
+    if lista is None:
+        lista = []
+    lista.append(elemento)
+    return lista
+
+print(aggiungi(1))   # [1]
+print(aggiungi(2))   # [2]
+print(aggiungi(3))   # [3]
+```
+</Aside>
+
+## Funzioni `lambda` (anonime)
+
+Una `lambda` è una funzione brevissima, di una sola espressione, usata spesso come argomento di altre funzioni.
+
+```python
+quadrato = lambda x: x ** 2
+print(quadrato(6))              # 36
+
+persone = [("Luca", 17), ("Anna", 15), ("Marco", 18)]
+# Ordinamento per età:
+persone.sort(key=lambda p: p[1])
+print(persone)
+```
+
+Per logiche più lunghe di una riga, usa `def`: le `lambda` servono solo quando restano brevi e chiare.
+
+## Scope: dove vivono le variabili
+
+Una variabile definita **dentro** una funzione è **locale**: non esiste al di fuori.
+
+```python
+def contatore():
+    n = 0
+    n += 1
+    return n
+
+print(contatore())
+# print(n)   → NameError: n non esiste qui
+```
+
+Una variabile definita **fuori** da tutte le funzioni è **globale**: la si può leggere dentro una funzione, ma per **modificarla** serve la parola chiave `global`.
+
+```python
+contatore = 0
+
+def incrementa():
+    global contatore
+    contatore += 1
+
+incrementa()
+incrementa()
+print(contatore)    # 2
+```
+
+<Aside type="tip" title="Meglio evitare le globali">
+Le variabili globali rendono il codice difficile da seguire. Quando possibile, **passa i valori come argomenti** e restituiscili con `return`.
+</Aside>
+
+## Docstring e documentazione
+
+La prima stringa di una funzione è la *docstring*: spiega cosa fa la funzione.
+
+```python
+def media(valori):
+    """Restituisce la media aritmetica di una lista di numeri."""
+    return sum(valori) / len(valori)
+
+print(media.__doc__)
+help(media)
+```
+
+## Esempio completo · registro voti
+
+```python
+def aggiungi_voto(registro, studente, voto):
+    """Aggiunge un voto a uno studente nel registro."""
+    if studente not in registro:
+        registro[studente] = []
+    registro[studente].append(voto)
+
+
+def media_studente(registro, studente):
+    """Restituisce la media dei voti di uno studente, o None se non ne ha."""
+    voti = registro.get(studente, [])
+    if not voti:
+        return None
+    return sum(voti) / len(voti)
+
+
+def classifica(registro):
+    """Elenco (studente, media) ordinato dalla media più alta."""
+    risultato = []
+    for studente in registro:
+        risultato.append((studente, media_studente(registro, studente)))
+    return sorted(risultato, key=lambda x: x[1], reverse=True)
+
+
+registro = {}
+aggiungi_voto(registro, "Luca", 8)
+aggiungi_voto(registro, "Luca", 7)
+aggiungi_voto(registro, "Anna", 9)
+aggiungi_voto(registro, "Anna", 10)
+
+for nome, media in classifica(registro):
+    print(f"{nome}: {media:.2f}")
+```
+
+## Da provare
+
+- Aggiungi una funzione `rimuovi_voto(registro, studente, indice)` che elimina l'ennesimo voto di uno studente.
+- Scrivi una funzione `applica(numeri, operazione)` che riceve una lista e **una funzione** come secondo argomento, e restituisce la lista con l'operazione applicata a ogni elemento (hint: `lambda`).

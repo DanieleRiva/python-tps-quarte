@@ -1,0 +1,142 @@
+---
+title: Radiobutton - scelta tra alternative
+description: Guida al widget Radiobutton di tkinter - una sola scelta tra tante, raggruppamento tramite variable comune, valore iniziale.
+sidebar:
+  order: 8
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il `Radiobutton` è un **pulsante di scelta esclusiva**: come i vecchi tasti della radio, se ne può selezionare **uno solo** in un gruppo. Per scegliere più opzioni insieme usa invece il [Checkbutton](/tkinter/checkbutton/).
+
+<Aside type="note" title="Quando usarlo">
+- Per **scelte tra poche alternative** (genere, livello di difficoltà, modalità pagamento).
+- Quando le opzioni sono poche (3-5): per molte opzioni è meglio un menu a tendina.
+- Per **impostazioni** mutuamente esclusive (es. "Tema chiaro / Tema scuro").
+</Aside>
+
+## Come si raggruppano
+
+I radiobutton **non si raggruppano per contenitore**: si raggruppano dando loro la **stessa variabile** (`variable`) ma **valori diversi** (`value`). Chi condivide la variable fa parte dello stesso gruppo.
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `text` | Etichetta accanto al pallino. |
+| `variable` | `StringVar`, `IntVar` o `DoubleVar` comune a tutto il gruppo. |
+| `value` | Valore che la variabile assumerà quando questo pulsante è selezionato. |
+| `command` | Funzione chiamata quando l'utente cambia selezione. |
+| `font`, `fg`, `bg` | Carattere e colori. |
+| `state` | `"normal"` o `"disabled"`. |
+
+## Esempio 1 · Scelta di una difficoltà
+
+```python
+import tkinter as tk
+
+
+def mostra():
+    etichetta.config(text=f"Difficoltà: {scelta.get()}")
+
+
+finestra = tk.Tk()
+finestra.geometry("280x200")
+
+scelta = tk.StringVar(value="facile")   # selezione di default
+
+for valore in ["facile", "medio", "difficile"]:
+    tk.Radiobutton(
+        finestra,
+        text=valore.capitalize(),
+        variable=scelta,
+        value=valore,
+        command=mostra,
+    ).pack(anchor="w", padx=30)
+
+etichetta = tk.Label(finestra, text="Difficoltà: facile", font=("Arial", 12))
+etichetta.pack(pady=10)
+
+finestra.mainloop()
+```
+
+`value=` è il valore che la `StringVar` assumerà **quando viene scelto quel pulsante**.
+
+## Esempio 2 · Nessuna selezione iniziale
+
+Se vuoi partire con **nessun** pulsante selezionato, imposta la variabile a un valore che non corrisponde a nessun `value`.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+scelta = tk.StringVar(value="")   # stringa vuota = nessuna selezione
+
+for v in ["Sì", "No", "Non so"]:
+    tk.Radiobutton(finestra, text=v, variable=scelta, value=v).pack(anchor="w", padx=30)
+
+tk.Button(finestra, text="Conferma",
+          command=lambda: print("Risposta:", scelta.get() or "(nessuna)")).pack(pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Due gruppi indipendenti
+
+Due gruppi convivono se usano **due variabili diverse**.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("380x200")
+
+tema = tk.StringVar(value="chiaro")
+tela = tk.StringVar(value="stampa")
+
+tk.Label(finestra, text="Tema:").grid(row=0, column=0, sticky="w", padx=10)
+tk.Radiobutton(finestra, text="Chiaro", variable=tema, value="chiaro").grid(row=1, column=0, sticky="w", padx=20)
+tk.Radiobutton(finestra, text="Scuro",  variable=tema, value="scuro").grid(row=2, column=0, sticky="w", padx=20)
+
+tk.Label(finestra, text="Uscita:").grid(row=0, column=1, sticky="w", padx=10)
+tk.Radiobutton(finestra, text="Stampa", variable=tela, value="stampa").grid(row=1, column=1, sticky="w", padx=20)
+tk.Radiobutton(finestra, text="Email",  variable=tela, value="email").grid(row=2, column=1, sticky="w", padx=20)
+tk.Radiobutton(finestra, text="File",   variable=tela, value="file").grid(row=3, column=1, sticky="w", padx=20)
+
+tk.Button(finestra, text="OK",
+          command=lambda: print(tema.get(), tela.get())).grid(row=4, column=0, columnspan=2, pady=10)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Radiobutton con layout orizzontale
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+tk.Label(finestra, text="Taglia maglietta:").pack(pady=5)
+
+cornice = tk.Frame(finestra)
+cornice.pack(pady=5)
+
+taglia = tk.StringVar(value="M")
+for t in ["S", "M", "L", "XL"]:
+    tk.Radiobutton(cornice, text=t, variable=taglia, value=t,
+                   indicatoron=False, width=4).pack(side="left", padx=2)
+
+tk.Button(finestra, text="Conferma",
+          command=lambda: print("Taglia:", taglia.get())).pack(pady=10)
+
+finestra.mainloop()
+```
+
+Con `indicatoron=False` il pallino sparisce e i radiobutton diventano **pulsanti attivabili**: utile per selettori di taglia, giorno, modalità.
+
+## Errori comuni
+
+- **Tutti i pulsanti si possono selezionare insieme**: hai usato una `variable` diversa per ciascun radiobutton. Devono condividere **la stessa** per essere un gruppo.
+- **Parte tutto deselezionato**: la `variable` ha un valore iniziale che non coincide con nessun `value`. Sistemane uno con `StringVar(value="…")`.
+- **Il `value` è un numero ma la `variable` è `StringVar`**: tipo sbagliato. Scegli `IntVar` se i valori sono numeri interi.

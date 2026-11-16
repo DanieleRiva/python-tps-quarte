@@ -1,0 +1,147 @@
+---
+title: Scrollbar - barre di scorrimento
+description: Guida al widget Scrollbar di tkinter - collegare una barra a Listbox, Text, Canvas, scorrimento verticale e orizzontale.
+sidebar:
+  order: 11
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Scrollbar` è la **barra di scorrimento**. Non funziona da sola: va **collegata** a un altro widget (`Listbox`, `Text`, `Canvas`) che a sua volta deve dirle "ora sono scorso qui". Il collegamento è **bidirezionale**.
+
+<Aside type="note" title="Quando usarla">
+- Quando una `Listbox`, un `Text` o un `Canvas` contengono **più dati** di quanti ne possano mostrare.
+- Per **scorrimento verticale** (il più comune) o **orizzontale**.
+</Aside>
+
+## Come si collega una scrollbar
+
+Il collegamento è in **due direzioni**:
+
+1. La scrollbar dice al widget "scorri" → `command=widget.yview` (o `xview`).
+2. Il widget dice alla scrollbar "sono a questa posizione" → `yscrollcommand=scrollbar.set` (o `xscrollcommand`).
+
+Entrambe sono necessarie, altrimenti vedrai la barra ma non si muoverà oppure non seguirà lo scroll fatto con la rotellina.
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `orient` | `"vertical"` (default) o `"horizontal"`. |
+| `command` | Il metodo `yview` / `xview` del widget da scorrere. |
+| `bg`, `troughcolor` | Colore sfondo e colore della "pista". |
+
+## Esempio 1 · Scrollbar verticale su Listbox
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("260x200")
+
+cornice = tk.Frame(finestra)
+cornice.pack(padx=10, pady=10, fill="both", expand=True)
+
+elenco = tk.Listbox(cornice)
+elenco.pack(side="left", fill="both", expand=True)
+
+barra = tk.Scrollbar(cornice, command=elenco.yview)
+barra.pack(side="right", fill="y")
+
+elenco.config(yscrollcommand=barra.set)
+
+for i in range(1, 101):
+    elenco.insert(tk.END, f"Voce {i}")
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Scrollbar verticale su Text
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("400x220")
+
+cornice = tk.Frame(finestra)
+cornice.pack(padx=10, pady=10, fill="both", expand=True)
+
+casella = tk.Text(cornice, wrap="word")
+casella.pack(side="left", fill="both", expand=True)
+
+barra = tk.Scrollbar(cornice, command=casella.yview)
+barra.pack(side="right", fill="y")
+
+casella.config(yscrollcommand=barra.set)
+
+for i in range(60):
+    casella.insert("end", f"Riga numero {i + 1} - un po' di testo di prova.\n")
+
+finestra.mainloop()
+```
+
+## Esempio 3 · Scrollbar orizzontale
+
+Per lo scorrimento orizzontale basta cambiare `orient` e usare `xview` / `xscrollcommand`. Con un `Text` serve anche `wrap="none"` per evitare che le righe vadano a capo.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("360x200")
+
+cornice = tk.Frame(finestra)
+cornice.pack(padx=10, pady=10, fill="both", expand=True)
+
+casella = tk.Text(cornice, height=5, wrap="none")
+casella.grid(row=0, column=0, sticky="nsew")
+
+y = tk.Scrollbar(cornice, orient="vertical",   command=casella.yview)
+x = tk.Scrollbar(cornice, orient="horizontal", command=casella.xview)
+y.grid(row=0, column=1, sticky="ns")
+x.grid(row=1, column=0, sticky="ew")
+
+casella.config(yscrollcommand=y.set, xscrollcommand=x.set)
+cornice.rowconfigure(0, weight=1)
+cornice.columnconfigure(0, weight=1)
+
+casella.insert("1.0", "Questa è una riga veramente lunga " * 10 + "\n")
+casella.insert("end", "Un'altra riga " * 20)
+
+finestra.mainloop()
+```
+
+## Esempio 4 · Scrollbar su Canvas
+
+Per un `Canvas` più grande della finestra, imposta `scrollregion` all'area totale disegnabile.
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("300x200")
+
+cornice = tk.Frame(finestra)
+cornice.pack(fill="both", expand=True)
+
+tela = tk.Canvas(cornice, bg="white", scrollregion=(0, 0, 1000, 800))
+tela.pack(side="left", fill="both", expand=True)
+
+barra = tk.Scrollbar(cornice, command=tela.yview)
+barra.pack(side="right", fill="y")
+tela.config(yscrollcommand=barra.set)
+
+# Qualcosa da scorrere
+for i in range(20):
+    tela.create_text(50, 20 + i * 40, text=f"Riga {i + 1}", anchor="w")
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **La barra appare ma non scorre**: manca uno dei due collegamenti. Devi impostare **sia** `command=widget.yview` **sia** `widget.config(yscrollcommand=barra.set)`.
+- **La barra non segue la rotellina del mouse**: hai dimenticato `yscrollcommand`.
+- **Il Canvas non scorre**: devi definire `scrollregion`: `tela.config(scrollregion=(0, 0, larg, alt))`.
+- **Due barre con pack**: incolonnarle è un pasticcio. Usa `grid` dentro un `Frame` (come nell'esempio 3).

@@ -1,0 +1,172 @@
+---
+title: Scale - slider numerico
+description: Guida al widget Scale di tkinter - slider orizzontale e verticale, risoluzione, aggiornamento in tempo reale, callback.
+sidebar:
+  order: 12
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Il widget `Scale` è lo **slider**: una barra su cui l'utente trascina un cursore per scegliere un **valore numerico** in un intervallo. È molto più intuitivo di un campo `Entry` per volumi, luminosità, percentuali.
+
+<Aside type="note" title="Quando usarlo">
+- Volume, luminosità, trasparenza, tempo.
+- Scegliere un numero **intero** o **decimale** in un intervallo chiuso.
+- Dove è utile **vedere** la posizione relativa (es. zoom da 50% a 200%).
+</Aside>
+
+## Opzioni principali
+
+| Opzione | A cosa serve |
+|---|---|
+| `from_` | Valore minimo. Si scrive con **trattino basso finale** perché `from` è parola chiave. |
+| `to` | Valore massimo. |
+| `orient` | `"horizontal"` o `"vertical"`. |
+| `length` | Lunghezza dello slider **in pixel**. |
+| `resolution` | Passo (es. `1` per interi, `0.1` per decimali). |
+| `tickinterval` | Distanza fra le tacche numeriche mostrate. |
+| `showvalue` | `True` (default) mostra il valore corrente sopra il cursore. |
+| `variable` | `IntVar` o `DoubleVar` che riceve il valore. |
+| `command` | Funzione chiamata a ogni spostamento (riceve il nuovo valore come stringa). |
+| `label` | Etichetta mostrata accanto allo slider. |
+
+## Esempio 1 · Slider base
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("320x120")
+
+tk.Scale(
+    finestra,
+    from_=0,
+    to=100,
+    orient="horizontal",
+    length=260,
+    label="Volume",
+).pack(pady=15)
+
+finestra.mainloop()
+```
+
+## Esempio 2 · Reagire allo spostamento
+
+```python
+import tkinter as tk
+
+
+def al_cambio(valore):   # il valore arriva SEMPRE come stringa
+    etichetta.config(text=f"Valore attuale: {int(valore)}")
+
+
+finestra = tk.Tk()
+finestra.geometry("320x160")
+
+tk.Scale(
+    finestra,
+    from_=0, to=100,
+    orient="horizontal",
+    length=260,
+    command=al_cambio,
+).pack(pady=10)
+
+etichetta = tk.Label(finestra, text="Valore attuale: 0")
+etichetta.pack()
+
+finestra.mainloop()
+```
+
+<Aside type="caution" title="Attento: è sempre una stringa">
+Il valore passato alla `command` è una **stringa** (es. `"42.0"`). Convertilo con `int(...)` o `float(...)` prima di usarlo in un calcolo.
+</Aside>
+
+## Esempio 3 · Scale verticale con tacche
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+finestra.geometry("220x320")
+
+tk.Scale(
+    finestra,
+    from_=10, to=0,          # dall'alto 10, in basso 0
+    orient="vertical",
+    length=260,
+    tickinterval=1,          # tacche ogni 1
+    resolution=1,
+    label="Voto",
+).pack(padx=30, pady=20)
+
+finestra.mainloop()
+```
+
+Mettere `from_` **maggiore** di `to` inverte l'orientamento: utile per "punteggio" in cui 10 sta in alto.
+
+## Esempio 4 · Due Scale collegate (RGB)
+
+```python
+import tkinter as tk
+
+
+def aggiorna(_=None):
+    r = scala_r.get()
+    g = scala_g.get()
+    b = scala_b.get()
+    colore = f"#{r:02x}{g:02x}{b:02x}"
+    pannello.config(bg=colore)
+    etichetta.config(text=colore)
+
+
+finestra = tk.Tk()
+finestra.title("Miscela colori")
+finestra.geometry("360x320")
+
+opzioni = dict(from_=0, to=255, orient="horizontal", length=280, command=aggiorna)
+
+scala_r = tk.Scale(finestra, label="R", **opzioni);  scala_r.pack()
+scala_g = tk.Scale(finestra, label="G", **opzioni);  scala_g.pack()
+scala_b = tk.Scale(finestra, label="B", **opzioni);  scala_b.pack()
+
+pannello = tk.Frame(finestra, width=280, height=60, bg="#000000")
+pannello.pack(pady=5)
+pannello.pack_propagate(False)
+
+etichetta = tk.Label(finestra, text="#000000", font=("Consolas", 12))
+etichetta.pack()
+
+finestra.mainloop()
+```
+
+## Esempio 5 · Decimali e DoubleVar
+
+```python
+import tkinter as tk
+
+finestra = tk.Tk()
+
+valore = tk.DoubleVar(value=1.0)
+
+tk.Scale(
+    finestra,
+    from_=0.0, to=5.0,
+    orient="horizontal",
+    length=280,
+    resolution=0.1,        # passi da 0.1
+    tickinterval=1.0,
+    variable=valore,
+    label="Fattore",
+).pack(padx=10, pady=20)
+
+tk.Label(finestra, textvariable=valore, font=("Arial", 14)).pack()
+
+finestra.mainloop()
+```
+
+## Errori comuni
+
+- **La `command` riceve una stringa**: converti sempre con `int(...)` o `float(...)` prima di usarla.
+- **`from` è sottolineato da PyCharm come errore**: devi scriverla con il trattino basso finale (`from_=0`), perché `from` è parola chiave di Python.
+- **Lo slider salta in modo strano**: la `resolution` non divide esattamente l'intervallo. Scegli valori coerenti (es. `from_=0, to=100, resolution=5`).
+- **Il valore non si aggiorna in un'etichetta**: collega l'etichetta con `textvariable` alla stessa variabile della Scale, invece di aggiornare a mano.

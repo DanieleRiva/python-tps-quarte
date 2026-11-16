@@ -1,0 +1,183 @@
+---
+title: pip e requirements.txt
+description: Come usare pip per installare librerie Python, cos'è requirements.txt e come gestire le dipendenze di un progetto.
+sidebar:
+  order: 10
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Che cos'è pip
+
+`pip` è il **gestore di pacchetti** di Python: è il programma che scarica e installa librerie di terze parti dal **Python Package Index** ([pypi.org](https://pypi.org/)). Viene installato insieme a Python e si usa dal terminale.
+
+Verifica che sia disponibile:
+
+```bash
+pip --version
+```
+
+<Aside type="tip" title="Prima attiva il venv">
+Quasi sempre vuoi che `pip` installi dentro l'ambiente virtuale del progetto, non in giro per il sistema. Prima di qualunque comando `pip install`, controlla di aver attivato il tuo `.venv` ([vedi la pagina su venv](/venv/)).
+</Aside>
+
+## Installare una libreria
+
+```bash
+pip install requests
+```
+
+`pip` cerca la libreria su PyPI, ne scarica l'ultima versione compatibile e la installa (con tutte le sue dipendenze) dentro l'ambiente attivo. Dopo l'installazione puoi usarla nel codice:
+
+```python
+import requests
+
+risposta = requests.get("https://api.github.com")
+print(risposta.status_code)
+```
+
+### Installare una versione specifica
+
+A volte un progetto vuole proprio **quella** versione, perché le più recenti hanno cambiato qualcosa:
+
+```bash
+pip install "requests==2.31.0"      # versione esatta
+pip install "requests>=2.30,<3.0"   # intervallo
+```
+
+### Aggiornare o rimuovere
+
+```bash
+pip install --upgrade requests
+pip uninstall requests
+```
+
+### Vedere cosa c'è installato
+
+```bash
+pip list                  # elenco di tutto
+pip show requests         # dettagli su un pacchetto
+```
+
+## Il problema: "a me funziona"
+
+Immagina di finire il tuo progetto, mandarlo al compagno di banco e sentirti dire *"non parte"*. Molto probabilmente il motivo è che sul tuo PC hai installato librerie che lui **non ha**. Il codice è corretto, ma le dipendenze sono invisibili: se non le dichiari, non si trasferiscono.
+
+La soluzione standard in Python è un file di testo chiamato **`requirements.txt`**.
+
+## Che cos'è requirements.txt
+
+È un semplice file di testo con **una libreria per riga**, nel formato `nome==versione`. Esempio:
+
+```text
+# requirements.txt
+requests==2.31.0
+pillow==10.2.0
+customtkinter==5.2.2
+```
+
+Vive **nella cartella del progetto**, va **salvato in git** (non è ignorato come `.venv`) e serve a:
+
+- documentare in modo preciso quali librerie usa il progetto;
+- permettere a chiunque (compreso te stesso, su un altro PC) di **ricostruire** l'ambiente con un solo comando;
+- rendere riproducibili i risultati: la versione è fissata, quindi domani la libreria non cambia sotto i piedi.
+
+## Generarlo automaticamente
+
+Quando il progetto è funzionante, con l'ambiente virtuale **attivo**:
+
+```bash
+pip freeze > requirements.txt
+```
+
+`pip freeze` stampa l'elenco di tutti i pacchetti installati nell'ambiente, già nel formato giusto. L'operatore `>` del terminale **reindirizza** l'output dentro il file `requirements.txt`, sovrascrivendolo.
+
+<Aside type="caution" title="Perché il venv è fondamentale qui">
+Se lanci `pip freeze` **senza** un ambiente virtuale attivo, ottieni l'elenco di tutto ciò che hai installato sul PC in generale: decine di librerie che non c'entrano nulla con il tuo progetto. Il file che ne esce è inutilizzabile.
+</Aside>
+
+## Installare le dipendenze da un requirements.txt
+
+Dall'altra parte, chi riceve il progetto deve solo:
+
+1. clonare o scaricare il progetto;
+2. creare e attivare un ambiente virtuale ([vedi la pagina su venv](/venv/));
+3. lanciare un comando solo:
+
+```bash
+pip install -r requirements.txt
+```
+
+`-r` sta per "read from file": `pip` legge `requirements.txt` riga per riga e installa tutto quello che trova, con esattamente le versioni indicate.
+
+## Il ciclo completo di una libreria nuova
+
+Quando durante lo sviluppo decidi di aggiungere una libreria, i passaggi sono sempre tre:
+
+<CardGrid>
+	<Card title="1. Attivo il venv" icon="rocket">
+		`.venv\Scripts\activate` (Windows) o `source .venv/bin/activate` (macOS/Linux).
+	</Card>
+	<Card title="2. Installo la libreria" icon="add-document">
+		`pip install nome-libreria`.
+	</Card>
+	<Card title="3. Aggiorno requirements.txt" icon="approve-check">
+		`pip freeze > requirements.txt`, poi commit del file aggiornato.
+	</Card>
+</CardGrid>
+
+Se dimentichi l'ultimo passaggio, il **tuo** PC funziona ma gli altri no.
+
+## Esempio pratico dall'inizio
+
+Mettiamo di voler creare un progetto che apre una finestra con `customtkinter` e scarica dati con `requests`:
+
+```bash
+# 1) cartella del progetto
+mkdir mia-app
+cd mia-app
+
+# 2) ambiente virtuale
+python -m venv .venv
+.venv\Scripts\activate         # Windows
+# source .venv/bin/activate    # macOS/Linux
+
+# 3) librerie
+pip install customtkinter requests
+
+# 4) sviluppo l'app...
+# ...
+
+# 5) prima di consegnare: congelo le dipendenze
+pip freeze > requirements.txt
+```
+
+Il compagno (o il prof) che riceve la cartella farà:
+
+```bash
+cd mia-app
+python -m venv .venv
+.venv\Scripts\activate         # Windows
+# source .venv/bin/activate    # macOS/Linux
+pip install -r requirements.txt
+python main.py
+```
+
+E l'app parte, **con le stesse versioni** che avevi tu.
+
+## Errori comuni
+
+- **`pip` non trovato** → quasi sempre Python non è nel PATH; su Windows reinstalla spuntando *Add python.exe to PATH*.
+- **Dice "permission denied" durante l'install** → quasi certamente stai installando **fuori** da un venv e Python sta provando a scrivere in cartelle di sistema. Attiva il venv e riprova.
+- **Il file `requirements.txt` ha centinaia di righe strane** → `pip freeze` è stato lanciato fuori dall'ambiente virtuale. Cancella il file, attiva il venv e rigeneralo.
+- **Dopo `pip install -r requirements.txt` manca ancora qualcosa** → di solito il venv non è attivo e le librerie sono andate nel Python di sistema.
+
+## Da ricordare per il progetto finale
+
+Nella consegna del [progetto finale](/progetto/) sono richiesti **sia** un `requirements.txt` **sia** istruzioni su come lanciarlo. La ricetta è sempre:
+
+1. l'utente crea un `.venv` e lo attiva;
+2. `pip install -r requirements.txt`;
+3. `python main.py`.
+
+Se segui questo schema fin da subito, al momento della consegna non devi inventare nulla.

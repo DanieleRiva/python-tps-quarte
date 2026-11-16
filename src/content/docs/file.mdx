@@ -1,0 +1,221 @@
+---
+title: File ed eccezioni
+description: Leggere e scrivere file di testo con open() e il costrutto with, modalità di apertura, gestione degli errori con try/except/else/finally e raise.
+sidebar:
+  order: 9
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Aprire un file: `open()` e `with`
+
+Per leggere o scrivere un file si usa `open(nome, modalità)`. La modalità più usata è `with`, che garantisce la **chiusura automatica** del file anche in caso di errori.
+
+```python
+with open("note.txt", "r", encoding="utf-8") as f:
+    contenuto = f.read()
+
+print(contenuto)
+```
+
+### Le modalità di apertura
+
+<table>
+  <thead>
+    <tr>
+      <th>Modalità</th>
+      <th>Significato</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>"r"</code></td><td>lettura (default). Errore se il file non esiste.</td></tr>
+    <tr><td><code>"w"</code></td><td>scrittura. <strong>Sovrascrive</strong> il contenuto. Crea il file se manca.</td></tr>
+    <tr><td><code>"a"</code></td><td>append: scrive <strong>in coda</strong>. Crea il file se manca.</td></tr>
+    <tr><td><code>"x"</code></td><td>scrittura esclusiva: errore se il file esiste già.</td></tr>
+    <tr><td><code>"b"</code></td><td>binaria (combinare con le altre: <code>"rb"</code>, <code>"wb"</code>).</td></tr>
+  </tbody>
+</table>
+
+<Aside type="note" title="Encoding">
+Per i file di testo indica sempre l'`encoding`. Su quasi tutti i progetti moderni si usa `utf-8`, che gestisce correttamente accenti e caratteri speciali.
+</Aside>
+
+## Leggere un file
+
+Ci sono tre modi principali:
+
+```python
+# 1. Tutto in una stringa
+with open("testo.txt", "r", encoding="utf-8") as f:
+    testo = f.read()
+
+# 2. Riga per riga (più efficiente, soprattutto su file grossi)
+with open("testo.txt", "r", encoding="utf-8") as f:
+    for riga in f:
+        print(riga.rstrip())   # rstrip rimuove il '\n' finale
+
+# 3. Tutte le righe in una lista
+with open("testo.txt", "r", encoding="utf-8") as f:
+    righe = f.readlines()
+```
+
+## Scrivere un file
+
+```python
+# Sovrascrivere completamente
+with open("output.txt", "w", encoding="utf-8") as f:
+    f.write("Prima riga\n")
+    f.write("Seconda riga\n")
+
+# Aggiungere in coda
+with open("output.txt", "a", encoding="utf-8") as f:
+    f.write("Nuova riga aggiunta\n")
+```
+
+## Esempio · registro voti su file
+
+```python
+def salva_voti(nome_file, voti):
+    with open(nome_file, "w", encoding="utf-8") as f:
+        for v in voti:
+            f.write(f"{v}\n")
+
+
+def carica_voti(nome_file):
+    voti = []
+    with open(nome_file, "r", encoding="utf-8") as f:
+        for riga in f:
+            riga = riga.strip()
+            if riga:
+                voti.append(float(riga))
+    return voti
+
+
+salva_voti("voti.txt", [8, 7, 9, 6.5, 10])
+
+ripresi = carica_voti("voti.txt")
+print(ripresi)
+print(f"Media: {sum(ripresi) / len(ripresi):.2f}")
+```
+
+## Le eccezioni
+
+Un'**eccezione** è un errore sollevato a tempo di esecuzione. Senza gestione, interrompe il programma. Con `try/except` si possono **intercettare** e gestire in modo controllato.
+
+```python
+try:
+    numero = int(input("Scrivi un numero: "))
+    print(10 / numero)
+except ValueError:
+    print("Non hai inserito un numero valido.")
+except ZeroDivisionError:
+    print("Non si può dividere per zero.")
+```
+
+### Il blocco `else` e `finally`
+
+```python
+try:
+    f = open("file.txt", "r", encoding="utf-8")
+except FileNotFoundError:
+    print("File mancante.")
+else:
+    # Eseguito solo se il try non ha sollevato eccezioni
+    contenuto = f.read()
+    print(contenuto)
+    f.close()
+finally:
+    # Eseguito SEMPRE, errore o no (pulizia)
+    print("Operazione terminata.")
+```
+
+### Catturare l'eccezione in una variabile
+
+```python
+try:
+    int("ciao")
+except ValueError as errore:
+    print(f"Si è verificato un errore: {errore}")
+```
+
+### Sollevare un'eccezione: `raise`
+
+Utile dentro le tue funzioni per segnalare parametri non validi.
+
+```python
+def radice(x):
+    if x < 0:
+        raise ValueError("La radice di un numero negativo non è reale.")
+    return x ** 0.5
+
+try:
+    print(radice(-4))
+except ValueError as e:
+    print(e)
+```
+
+<Aside type="caution" title="Non intercettare Exception a caso">
+`except Exception:` cattura **quasi tutto** e nasconde bug. Cattura solo le eccezioni specifiche che sai come gestire. Se intercetti un errore generico, almeno **stampa il messaggio** anziché ignorarlo.
+</Aside>
+
+## Esempio completo · rubrica telefonica
+
+```python
+FILE = "rubrica.txt"
+
+
+def carica():
+    rubrica = {}
+    try:
+        with open(FILE, "r", encoding="utf-8") as f:
+            for riga in f:
+                nome, numero = riga.strip().split(";")
+                rubrica[nome] = numero
+    except FileNotFoundError:
+        pass   # prima esecuzione: rubrica vuota
+    return rubrica
+
+
+def salva(rubrica):
+    with open(FILE, "w", encoding="utf-8") as f:
+        for nome, numero in rubrica.items():
+            f.write(f"{nome};{numero}\n")
+
+
+def menu():
+    rubrica = carica()
+    while True:
+        scelta = input("\n[1] Elenco  [2] Aggiungi  [3] Cerca  [0] Esci\n> ").strip()
+        if scelta == "1":
+            for nome, numero in rubrica.items():
+                print(f"  {nome}: {numero}")
+        elif scelta == "2":
+            nome = input("Nome: ").strip()
+            numero = input("Numero: ").strip()
+            if nome and numero:
+                rubrica[nome] = numero
+                salva(rubrica)
+        elif scelta == "3":
+            chiave = input("Cerca: ").strip()
+            trovati = {n: v for n, v in rubrica.items() if chiave.lower() in n.lower()}
+            if trovati:
+                for n, v in trovati.items():
+                    print(f"  {n}: {v}")
+            else:
+                print("  Nessun risultato.")
+        elif scelta == "0":
+            break
+
+
+if __name__ == "__main__":
+    try:
+        menu()
+    except KeyboardInterrupt:
+        print("\nUscita forzata. Rubrica salvata.")
+```
+
+## Da provare
+
+- Salva i voti in formato **CSV** (una riga, valori separati da virgola) invece che una riga per voto.
+- Aggiungi alla rubrica una funzione per **eliminare** un contatto, chiedendo conferma.
+- Gestisci il caso in cui una riga del file sia **malformata**: non deve bloccare il caricamento.
