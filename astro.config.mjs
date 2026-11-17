@@ -4,6 +4,10 @@ import starlightThemeNova from 'starlight-theme-nova';
 import remarkGfm from 'remark-gfm';
 
 export default defineConfig({
+	// Il sito è pubblicato su GitHub Pages come "project site", quindi vive
+	// sotto /python-tps-quarte/ e non alla radice del dominio.
+	site: 'https://danieleriva.github.io',
+	base: '/python-tps-quarte',
 	markdown: {
 		remarkPlugins: [remarkGfm],
 	},

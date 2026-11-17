@@ -44,10 +44,10 @@ Un **widget** è un elemento dell'interfaccia: un'etichetta, un pulsante, un cam
 
 Nelle pagine dedicate trovi una **guida approfondita** per ogni widget con tutte le opzioni, esempi progressivi ed errori comuni:
 
-- Widget: [Label](/tkinter/label/) · [Button](/tkinter/button/) · [Entry](/tkinter/entry/) · [Frame](/tkinter/frame/) · [Canvas](/tkinter/canvas/) · [Text](/tkinter/text/) · [Checkbutton](/tkinter/checkbutton/) · [Radiobutton](/tkinter/radiobutton/) · [Listbox](/tkinter/listbox/) · [Menu](/tkinter/menu/) · [Scrollbar](/tkinter/scrollbar/) · [Scale](/tkinter/scale/) · [Spinbox](/tkinter/spinbox/)
-- Layout manager: [pack](/tkinter/pack/) · [grid](/tkinter/grid/) · [place](/tkinter/place/)
+- Widget: [Label](/python-tps-quarte/tkinter/label/) · [Button](/python-tps-quarte/tkinter/button/) · [Entry](/python-tps-quarte/tkinter/entry/) · [Frame](/python-tps-quarte/tkinter/frame/) · [Canvas](/python-tps-quarte/tkinter/canvas/) · [Text](/python-tps-quarte/tkinter/text/) · [Checkbutton](/python-tps-quarte/tkinter/checkbutton/) · [Radiobutton](/python-tps-quarte/tkinter/radiobutton/) · [Listbox](/python-tps-quarte/tkinter/listbox/) · [Menu](/python-tps-quarte/tkinter/menu/) · [Scrollbar](/python-tps-quarte/tkinter/scrollbar/) · [Scale](/python-tps-quarte/tkinter/scale/) · [Spinbox](/python-tps-quarte/tkinter/spinbox/)
+- Layout manager: [pack](/python-tps-quarte/tkinter/pack/) · [grid](/python-tps-quarte/tkinter/grid/) · [place](/python-tps-quarte/tkinter/place/)
 
-### [Label](/tkinter/label/) - etichette di testo
+### [Label](/python-tps-quarte/tkinter/label/) - etichette di testo
 
 ```python
 tk.Label(finestra, text="Inserisci il tuo nome:", font=("Arial", 12)).pack()
@@ -55,7 +55,7 @@ tk.Label(finestra, text="Inserisci il tuo nome:", font=("Arial", 12)).pack()
 
 Opzioni frequenti: `text`, `font`, `fg` (colore testo), `bg` (sfondo), `padx`/`pady` (padding interno).
 
-### [Button](/tkinter/button/) - pulsanti
+### [Button](/python-tps-quarte/tkinter/button/) - pulsanti
 
 Un pulsante esegue una **funzione** quando viene cliccato. La funzione va passata senza parentesi (si passa la funzione, non il suo risultato).
 
@@ -66,7 +66,7 @@ def saluta():
 tk.Button(finestra, text="Cliccami", command=saluta).pack()
 ```
 
-### [Entry](/tkinter/entry/) - campo di testo
+### [Entry](/python-tps-quarte/tkinter/entry/) - campo di testo
 
 Serve per **leggere** una riga di testo dall'utente.
 
@@ -78,7 +78,7 @@ nome.pack()
 # testo = nome.get()
 ```
 
-### [Frame](/tkinter/frame/) - contenitore
+### [Frame](/python-tps-quarte/tkinter/frame/) - contenitore
 
 Un `Frame` è un widget invisibile che serve a **raggruppare** altri widget: utile per organizzare la finestra in sezioni e applicare layout diversi.
 
@@ -89,7 +89,7 @@ intestazione.pack(fill="x")
 tk.Label(intestazione, text="Titolo", fg="white", bg="#222").pack()
 ```
 
-### [Canvas](/tkinter/canvas/) - area di disegno
+### [Canvas](/python-tps-quarte/tkinter/canvas/) - area di disegno
 
 Permette di disegnare linee, rettangoli, cerchi, testo, immagini. Base per mini-giochi e grafici semplici.
 
@@ -103,7 +103,7 @@ tela.create_line(0, 150, 300, 150, width=3)
 tela.create_text(150, 180, text="Disegno base", font=("Arial", 14))
 ```
 
-### [Listbox](/tkinter/listbox/) - elenco selezionabile
+### [Listbox](/python-tps-quarte/tkinter/listbox/) - elenco selezionabile
 
 Mostra una lista di voci cliccabili; combinata con una `Scrollbar` gestisce elenchi lunghi.
 
@@ -118,7 +118,7 @@ barra.pack(side="left", fill="y")
 elenco.config(yscrollcommand=barra.set)
 ```
 
-### [Menu](/tkinter/menu/) - barra dei menu
+### [Menu](/python-tps-quarte/tkinter/menu/) - barra dei menu
 
 La classica barra in alto con *File*, *Modifica*, *Aiuto*…
 
@@ -135,14 +135,14 @@ menu_file.add_command(label="Esci", command=finestra.quit)
 ```
 
 <Aside type="tip" title="Altri widget utili">
-Esistono anche [Checkbutton](/tkinter/checkbutton/) (caselle a crocetta), [Radiobutton](/tkinter/radiobutton/) (scelta fra alternative), [Scale](/tkinter/scale/) (slider), [Spinbox](/tkinter/spinbox/) (valore numerico con frecce), [Text](/tkinter/text/) (testo su più righe), [Scrollbar](/tkinter/scrollbar/) (barre di scorrimento). Hanno tutti lo stesso schema: `tk.Widget(contenitore, opzioni...).pack()`.
+Esistono anche [Checkbutton](/python-tps-quarte/tkinter/checkbutton/) (caselle a crocetta), [Radiobutton](/python-tps-quarte/tkinter/radiobutton/) (scelta fra alternative), [Scale](/python-tps-quarte/tkinter/scale/) (slider), [Spinbox](/python-tps-quarte/tkinter/spinbox/) (valore numerico con frecce), [Text](/python-tps-quarte/tkinter/text/) (testo su più righe), [Scrollbar](/python-tps-quarte/tkinter/scrollbar/) (barre di scorrimento). Hanno tutti lo stesso schema: `tk.Widget(contenitore, opzioni...).pack()`.
 </Aside>
 
 ## 3 · Layout manager
 
 Un widget **non compare** finché non lo posizioni. tkinter offre tre modi (**layout manager**) per sistemare i widget. In una stessa finestra puoi usarne solo uno per contenitore, ma contenitori diversi possono usarne di diversi.
 
-### [pack](/tkinter/pack/) - impilamento semplice
+### [pack](/python-tps-quarte/tkinter/pack/) - impilamento semplice
 
 Impila i widget uno sopra l'altro (o uno accanto all'altro). Perfetto per interfacce lineari.
 
@@ -155,7 +155,7 @@ tk.Label(finestra, text="In basso").pack(side="bottom")
 
 Opzioni frequenti: `side` (`top`, `bottom`, `left`, `right`), `fill` (`x`, `y`, `both`), `expand` (True/False), `padx`, `pady`.
 
-### [grid](/tkinter/grid/) - griglia a righe e colonne
+### [grid](/python-tps-quarte/tkinter/grid/) - griglia a righe e colonne
 
 Dispone i widget in una **griglia** indicando riga e colonna. È il layout più potente per moduli con etichette e campi affiancati.
 
@@ -171,7 +171,7 @@ tk.Button(finestra, text="Invia").grid(row=2, column=0, columnspan=2, pady=10)
 
 Opzioni frequenti: `row`, `column`, `rowspan`, `columnspan`, `sticky` (`n`, `s`, `e`, `w` e combinazioni), `padx`, `pady`.
 
-### [place](/tkinter/place/) - posizione assoluta
+### [place](/python-tps-quarte/tkinter/place/) - posizione assoluta
 
 Posiziona il widget in **pixel precisi**. Da usare raramente: utile per effetti grafici, non per moduli normali.
 
@@ -406,6 +406,6 @@ finestra.mainloop()
 
 ## Da provare
 
-- Rifai il **gioco "indovina il numero"** (vedi [Cicli](/cicli/)) con un'interfaccia tkinter: una `Entry` per il tentativo, un `Button` per confermare, una `Label` che mostra "più alto / più basso / hai vinto".
-- Aggiungi alla **mini rubrica** sopra: il salvataggio dei contatti su file JSON (vedi [File ed eccezioni](/file/)) e il ripristino all'avvio del programma.
+- Rifai il **gioco "indovina il numero"** (vedi [Cicli](/python-tps-quarte/cicli/)) con un'interfaccia tkinter: una `Entry` per il tentativo, un `Button` per confermare, una `Label` che mostra "più alto / più basso / hai vinto".
+- Aggiungi alla **mini rubrica** sopra: il salvataggio dei contatti su file JSON (vedi [File ed eccezioni](/python-tps-quarte/file/)) e il ripristino all'avvio del programma.
 - Trasforma il **convertitore di unità** in un'applicazione con menu a tendina (`OptionMenu`) per scegliere l'unità di partenza e quella di arrivo.
