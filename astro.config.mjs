@@ -116,6 +116,7 @@ export default defineConfig({
 								{ label: 'place', link: '/tkinter/place/' },
 							],
 						},
+						{ label: 'Immagini e asset', link: '/tkinter/immagini/' },
 					],
 				},
 				{

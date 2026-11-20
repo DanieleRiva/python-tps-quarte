@@ -1,0 +1,523 @@
+---
+title: Immagini e asset
+description: Come inserire immagini, icone e altri file (asset) in un'applicazione tkinter - organizzazione delle cartelle, percorsi sicuri, PhotoImage, Pillow, icona della finestra, sprite sul Canvas.
+sidebar:
+  order: 20
+---
+
+import { Aside, FileTree } from '@astrojs/starlight/components';
+
+Un **asset** è qualunque file che il programma usa ma che **non è codice**: immagini, icone, sfondi, suoni, font, file di dati (JSON, CSV, TXT). Un mini-gioco ha bisogno degli sprite dei personaggi, un'app di ricette delle foto dei piatti, un quiz forse di un logo e di un file con le domande.
+
+In questo capitolo vediamo come **organizzare** gli asset nella cartella del progetto, come **trovarli** in modo affidabile dal codice e come **mostrare le immagini** nei widget tkinter.
+
+<Aside type="note" title="Cosa impari in questa pagina">
+- Dove mettere immagini e altri file nel progetto.
+- Perché `PhotoImage(file="logo.png")` a volte funziona e a volte no, e come risolvere **per sempre**.
+- Come mostrare un'immagine in `Label`, `Button` e `Canvas`.
+- Come ridimensionare e usare i **JPEG** con la libreria `Pillow`.
+- Come cambiare l'**icona** della finestra.
+- Come muovere uno **sprite** sul `Canvas` per un mini-gioco.
+</Aside>
+
+## 1 · Organizzare la cartella del progetto
+
+Non lasciare le immagini sparse accanto ai file `.py`: crea una cartella `assets` con delle sottocartelle per tipo di file. Quando il progetto cresce sai subito dove cercare, e il repository GitHub resta ordinato.
+
+<FileTree>
+- mio_progetto/
+  - main.py
+  - requirements.txt
+  - assets/
+    - immagini/
+      - logo.png
+      - sfondo.png
+      - giocatore.png
+    - icone/
+      - app.png
+      - salva.png
+      - apri.png
+    - dati/
+      - domande.json
+  - .venv/ non va su GitHub
+</FileTree>
+
+Qualche regola pratica sui nomi dei file:
+
+- **solo minuscole, niente spazi e niente accenti**: `sfondo_livello1.png`, non `Sfondo Livello 1.PNG`. Windows non distingue maiuscole e minuscole, ma macOS e Linux sì: un file che "funziona sul mio PC" può non essere trovato su quello del compagno;
+- usa **nomi che descrivono il contenuto** (`giocatore.png`, non `img3.png`);
+- tieni le immagini **piccole**: una foto da 6000×4000 pixel pesa diversi MB, rallenta l'avvio e appesantisce il repository. Ridimensionala prima con un programma di grafica oppure con Pillow (vedi più avanti).
+
+## 2 · Il problema dei percorsi
+
+Questo è l'errore più frequente in assoluto quando si inseriscono immagini:
+
+```python
+logo = tk.PhotoImage(file="assets/immagini/logo.png")
+```
+
+```text
+_tkinter.TclError: couldn't open "assets/immagini/logo.png": no such file or directory
+```
+
+Il file esiste, il nome è giusto… eppure non lo trova. Il motivo è che un **percorso relativo** come `"assets/immagini/logo.png"` non viene cercato a partire dalla cartella dello script, ma dalla **cartella di lavoro** (*working directory*), cioè la cartella in cui si trovava il terminale quando hai lanciato il programma.
+
+- Se apri il terminale **dentro** `mio_progetto` e lanci `python main.py`, funziona.
+- Se lo lanci da un'altra cartella (`python mio_progetto\main.py`) oppure con il pulsante ▶ di VS Code mentre hai aperto la cartella padre, **non funziona**.
+
+### La soluzione: partire dalla posizione dello script
+
+La variabile speciale `__file__` contiene il percorso del file `.py` in esecuzione. Con il modulo `pathlib` (incluso in Python) costruiamo un percorso che parte **sempre** da lì, indipendentemente da dove è stato lanciato il programma.
+
+```python
+# percorsi.py - costruire percorsi affidabili verso gli asset
+from pathlib import Path
+
+CARTELLA_PROGETTO = Path(__file__).resolve().parent   # la cartella di main.py
+ASSETS = CARTELLA_PROGETTO / "assets"                  # l'operatore / unisce i pezzi
+IMMAGINI = ASSETS / "immagini"
+
+print(CARTELLA_PROGETTO)
+print(IMMAGINI / "logo.png")
+print((IMMAGINI / "logo.png").exists())    # True se il file c'è davvero
+```
+
+L'operatore `/` tra oggetti `Path` unisce i pezzi del percorso usando il separatore giusto per il sistema operativo (`\` su Windows, `/` su macOS e Linux): non devi preoccupartene tu.
+
+<Aside type="tip" title="Regola d'oro">
+Definisci `ASSETS = Path(__file__).resolve().parent / "assets"` **una volta sola**, in cima a `main.py`, e costruisci tutti i percorsi a partire da lì. Vale per immagini, suoni e anche per i file di dati che leggi con `open()` (vedi [File ed eccezioni](/python-tps-quarte/file/)).
+</Aside>
+
+<Aside type="caution" title="Niente percorsi assoluti">
+Non scrivere mai `PhotoImage(file="C:/Users/mario/Desktop/progetto/logo.png")`: funziona solo sul tuo computer. Sul PC del professore quella cartella non esiste e il programma si blocca all'avvio.
+</Aside>
+
+## 3 · Mostrare un'immagine con PhotoImage
+
+tkinter ha già una classe per le immagini: `tk.PhotoImage`. Legge direttamente i formati **PNG** e **GIF** (con la trasparenza), senza installare nulla.
+
+Il procedimento è sempre lo stesso, in due passi:
+
+1. **carico** l'immagine in un oggetto `PhotoImage` (dopo aver creato la finestra);
+2. la passo all'opzione `image=` di un widget.
+
+```python
+# immagine_label.py - un logo in una Label
+import tkinter as tk
+from pathlib import Path
+
+ASSETS = Path(__file__).resolve().parent / "assets"
+
+finestra = tk.Tk()
+finestra.title("Logo")
+
+logo = tk.PhotoImage(file=ASSETS / "immagini" / "logo.png")   # 1. carico
+
+tk.Label(finestra, image=logo).pack(padx=20, pady=(20, 5))      # 2. mostro
+tk.Label(finestra, text="La mia app", font=("Arial", 16, "bold")).pack(pady=(0, 20))
+
+finestra.mainloop()
+```
+
+<Aside type="caution" title="Prima Tk(), poi PhotoImage">
+Un `PhotoImage` può essere creato **solo dopo** `tk.Tk()`. Se lo carichi prima della finestra ottieni l'errore `RuntimeError: Too early to create image`.
+</Aside>
+
+### Immagine e testo insieme in un Button
+
+Con l'opzione `compound` decidi dove va l'immagine rispetto al testo: `"left"`, `"right"`, `"top"`, `"bottom"` oppure `"center"` (testo sopra l'immagine). È il modo classico per fare pulsanti con icona.
+
+```python
+# pulsanti_icona.py - una piccola toolbar con icone
+import tkinter as tk
+from pathlib import Path
+
+ICONE = Path(__file__).resolve().parent / "assets" / "icone"
+
+finestra = tk.Tk()
+finestra.title("Toolbar")
+
+icona_apri = tk.PhotoImage(file=ICONE / "apri.png")
+icona_salva = tk.PhotoImage(file=ICONE / "salva.png")
+
+barra = tk.Frame(finestra, bd=1, relief="raised")
+barra.pack(fill="x")
+
+tk.Button(barra, text="Apri", image=icona_apri, compound="left",
+          padx=6, command=lambda: print("Apri")).pack(side="left", padx=2, pady=2)
+tk.Button(barra, text="Salva", image=icona_salva, compound="left",
+          padx=6, command=lambda: print("Salva")).pack(side="left", padx=2, pady=2)
+
+tk.Text(finestra, width=50, height=10).pack(padx=5, pady=5)
+
+finestra.mainloop()
+```
+
+<Aside type="note" title="Larghezza in pixel">
+Quando un `Label` o un `Button` contiene un'immagine, le opzioni `width` e `height` si misurano in **pixel** e non più in caratteri.
+</Aside>
+
+### Cambiare immagine durante il programma
+
+Per sostituire l'immagine mostrata (es. un semaforo che cambia colore, una carta che si gira) basta `widget.config(image=nuova_immagine)`. Le immagini conviene caricarle **tutte all'avvio** e tenerle in un dizionario.
+
+```python
+# semaforo.py - cambio immagine a ogni click
+import tkinter as tk
+from pathlib import Path
+
+IMMAGINI = Path(__file__).resolve().parent / "assets" / "immagini"
+
+finestra = tk.Tk()
+finestra.title("Semaforo")
+
+luci = {
+    "rosso": tk.PhotoImage(file=IMMAGINI / "rosso.png"),
+    "giallo": tk.PhotoImage(file=IMMAGINI / "giallo.png"),
+    "verde": tk.PhotoImage(file=IMMAGINI / "verde.png"),
+}
+sequenza = ["rosso", "verde", "giallo"]
+indice = 0
+
+semaforo = tk.Label(finestra, image=luci["rosso"])
+semaforo.pack(padx=30, pady=20)
+
+
+def avanti():
+    global indice
+    indice = (indice + 1) % len(sequenza)
+    semaforo.config(image=luci[sequenza[indice]])
+
+
+tk.Button(finestra, text="Cambia", command=avanti).pack(pady=(0, 20))
+
+finestra.mainloop()
+```
+
+## 4 · L'immagine che sparisce: tenere il riferimento
+
+Prima o poi ti capiterà: carichi un'immagine **dentro una funzione**, il codice non dà errori, ma al posto dell'immagine compare un riquadro vuoto.
+
+```python
+# SBAGLIATO: l'immagine non si vede
+def mostra_logo():
+    logo = tk.PhotoImage(file=ASSETS / "immagini" / "logo.png")
+    tk.Label(finestra, image=logo).pack()
+    # fine della funzione: la variabile locale "logo" sparisce...
+```
+
+Quando la funzione termina, la variabile locale `logo` smette di esistere. Python pensa che l'immagine non serva più e la **cancella dalla memoria** (*garbage collection*). Il widget però non tiene una copia per conto suo, quindi resta vuoto.
+
+La soluzione è **tenere un riferimento** all'immagine finché il widget la mostra. Il modo più semplice è attaccarla al widget stesso:
+
+```python
+# GIUSTO: il riferimento resta attaccato alla Label
+def mostra_logo():
+    logo = tk.PhotoImage(file=ASSETS / "immagini" / "logo.png")
+    etichetta = tk.Label(finestra, image=logo)
+    etichetta.image = logo          # <-- il riferimento che salva l'immagine
+    etichetta.pack()
+```
+
+In alternativa puoi salvare le immagini in una **variabile globale** (una lista o un dizionario) come nell'esempio del semaforo: anche così restano vive per tutta la durata del programma.
+
+<Aside type="tip" title="Come riconoscerlo">
+Se l'immagine "funziona" quando il codice è fuori dalle funzioni ma sparisce quando lo sposti dentro una funzione, il problema è **sempre** il riferimento mancante.
+</Aside>
+
+## 5 · Ridimensionare con PhotoImage
+
+`PhotoImage` sa ingrandire e rimpicciolire solo di **fattori interi**:
+
+```python
+grande = tk.PhotoImage(file=IMMAGINI / "giocatore.png")
+piccola = grande.subsample(2)      # metà larghezza e metà altezza
+doppia = grande.zoom(2)            # il doppio (effetto "pixel art")
+mini = grande.subsample(4, 4)      # un quarto in entrambe le direzioni
+
+print(grande.width(), grande.height())   # dimensioni in pixel
+```
+
+Per ridimensionare a una misura precisa (es. 120×80 pixel) o per leggere i **JPEG** serve Pillow.
+
+## 6 · Pillow: JPEG e ridimensionamenti precisi
+
+**Pillow** è la libreria standard *de facto* per lavorare con le immagini in Python. Non è inclusa in Python: va installata nell'ambiente virtuale (vedi [venv](/python-tps-quarte/venv/) e [pip](/python-tps-quarte/pip/)).
+
+```bash
+pip install pillow
+```
+
+Ricordati poi di aggiornare `requirements.txt` (`pip freeze > requirements.txt`), altrimenti sul PC del professore il progetto non parte. Nel codice la libreria si importa con il nome `PIL`:
+
+```python
+from PIL import Image, ImageTk
+```
+
+- `Image` serve a **aprire e modificare** l'immagine (ridimensionare, ruotare, ritagliare…);
+- `ImageTk.PhotoImage` la **converte** in un oggetto che tkinter sa mostrare. Si usa al posto di `tk.PhotoImage`.
+
+```python
+# foto_pillow.py - mostrare un JPEG ridimensionato
+import tkinter as tk
+from pathlib import Path
+from PIL import Image, ImageTk
+
+IMMAGINI = Path(__file__).resolve().parent / "assets" / "immagini"
+
+finestra = tk.Tk()
+finestra.title("Foto")
+
+originale = Image.open(IMMAGINI / "paesaggio.jpg")     # qualunque formato: JPG, PNG, BMP, WEBP...
+print(originale.size)                                   # (larghezza, altezza) originali
+
+ridotta = originale.resize((400, 250))                  # misura esatta in pixel
+foto = ImageTk.PhotoImage(ridotta)                      # conversione per tkinter
+
+tk.Label(finestra, image=foto).pack(padx=10, pady=10)
+
+finestra.mainloop()
+```
+
+### Mantenere le proporzioni
+
+`resize` deforma l'immagine se le proporzioni non coincidono. Per farla stare **dentro** un riquadro senza schiacciarla usa `thumbnail`, che modifica l'immagine mantenendo il rapporto larghezza/altezza:
+
+```python
+img = Image.open(IMMAGINI / "paesaggio.jpg")
+img.thumbnail((300, 300))      # al massimo 300x300, proporzioni conservate
+foto = ImageTk.PhotoImage(img)
+```
+
+### Altre operazioni utili
+
+```python
+img = Image.open(IMMAGINI / "paesaggio.jpg")
+
+ruotata = img.rotate(90, expand=True)          # ruota di 90° in senso antiorario
+specchiata = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+bianco_nero = img.convert("L")                 # scala di grigi
+ritaglio = img.crop((50, 50, 250, 200))        # (sinistra, alto, destra, basso)
+
+ritaglio.save(IMMAGINI / "ritaglio.png")       # salva su file
+```
+
+<Aside type="caution" title="Anche qui serve il riferimento">
+Un `ImageTk.PhotoImage` si comporta esattamente come un `tk.PhotoImage`: deve essere creato **dopo** `tk.Tk()` e devi **tenerne un riferimento** (sezione 4), altrimenti sparisce.
+</Aside>
+
+## 7 · Una funzione per caricare tutto
+
+Nei progetti reali conviene scrivere **una funzione sola** che carica le immagini: costruisce il percorso, ridimensiona se serve e tiene il riferimento in un dizionario (così ogni file viene letto una volta sola e non sparisce mai).
+
+```python
+# asset.py - funzione di caricamento riutilizzabile
+from pathlib import Path
+from PIL import Image, ImageTk
+
+IMMAGINI = Path(__file__).resolve().parent / "assets" / "immagini"
+_cache = {}   # nome -> immagine già caricata
+
+
+def carica_immagine(nome, larghezza=None, altezza=None):
+    """Restituisce l'immagine pronta per tkinter, ridimensionata se richiesto."""
+    chiave = (nome, larghezza, altezza)
+    if chiave not in _cache:
+        img = Image.open(IMMAGINI / nome)
+        if larghezza and altezza:
+            img = img.resize((larghezza, altezza))
+        _cache[chiave] = ImageTk.PhotoImage(img)
+    return _cache[chiave]
+```
+
+Uso nel programma principale (dopo aver creato la finestra):
+
+```python
+tk.Label(finestra, image=carica_immagine("logo.png", 120, 120)).pack()
+tk.Button(finestra, image=carica_immagine("play.png", 48, 48), command=gioca).pack()
+```
+
+## 8 · L'icona della finestra
+
+Di default la finestra mostra la piuma di tkinter. Per sostituirla con l'icona della tua applicazione usa `iconphoto` con un'immagine PNG (consigliato: quadrata, 32×32 o 64×64 pixel):
+
+```python
+finestra = tk.Tk()
+finestra.title("La mia app")
+
+icona = tk.PhotoImage(file=ASSETS / "icone" / "app.png")
+finestra.iconphoto(True, icona)   # True = vale anche per le finestre Toplevel
+```
+
+Su Windows esiste anche `finestra.iconbitmap("app.ico")`, che però accetta solo file `.ico` e non funziona su macOS e Linux: `iconphoto` con un PNG è la scelta più portabile.
+
+## 9 · Immagini sul Canvas: sfondo e sprite
+
+Sul [Canvas](/python-tps-quarte/tkinter/canvas/) le immagini si disegnano con `create_image(x, y, image=...)`. Per default le coordinate indicano il **centro** dell'immagine; con `anchor="nw"` indicano invece l'angolo in alto a sinistra (comodo per gli sfondi).
+
+Un'immagine sul Canvas è un oggetto come un rettangolo: si può **muovere** con `move`, **spostare** con `coords` e **cambiare** con `itemconfig`. È la base di qualunque mini-gioco.
+
+```python
+# sprite.py - muovere un personaggio con le frecce
+import tkinter as tk
+from pathlib import Path
+
+IMMAGINI = Path(__file__).resolve().parent / "assets" / "immagini"
+LARGHEZZA, ALTEZZA = 600, 400
+PASSO = 10
+
+finestra = tk.Tk()
+finestra.title("Sprite")
+finestra.resizable(False, False)
+
+tela = tk.Canvas(finestra, width=LARGHEZZA, height=ALTEZZA, highlightthickness=0)
+tela.pack()
+
+sfondo_img = tk.PhotoImage(file=IMMAGINI / "sfondo.png")
+giocatore_img = tk.PhotoImage(file=IMMAGINI / "giocatore.png")
+
+tela.create_image(0, 0, image=sfondo_img, anchor="nw")                     # sfondo
+giocatore = tela.create_image(LARGHEZZA // 2, ALTEZZA // 2, image=giocatore_img)
+
+
+def muovi(evento):
+    spostamenti = {"Left": (-PASSO, 0), "Right": (PASSO, 0),
+                   "Up": (0, -PASSO), "Down": (0, PASSO)}
+    if evento.keysym not in spostamenti:
+        return
+    dx, dy = spostamenti[evento.keysym]
+
+    x, y = tela.coords(giocatore)                 # posizione attuale (centro)
+    meta_l = giocatore_img.width() // 2
+    meta_a = giocatore_img.height() // 2
+    # non lascio uscire il personaggio dalla tela
+    if meta_l <= x + dx <= LARGHEZZA - meta_l and meta_a <= y + dy <= ALTEZZA - meta_a:
+        tela.move(giocatore, dx, dy)
+
+
+finestra.bind("<Key>", muovi)
+finestra.mainloop()
+```
+
+<Aside type="tip" title="Trasparenza">
+Usa sprite in **PNG con sfondo trasparente**: così sul Canvas si vede solo il personaggio e non un rettangolo bianco attorno. I JPEG non supportano la trasparenza.
+</Aside>
+
+### Una piccola animazione
+
+Per animare uno sprite si alternano più immagini (i **fotogrammi**) a intervalli regolari con `after`, esattamente come nell'animazione della pagina [Canvas](/python-tps-quarte/tkinter/canvas/):
+
+```python
+fotogrammi = [tk.PhotoImage(file=IMMAGINI / f"cammina_{i}.png") for i in range(1, 5)]
+numero = 0
+
+
+def anima():
+    global numero
+    numero = (numero + 1) % len(fotogrammi)
+    tela.itemconfig(giocatore, image=fotogrammi[numero])
+    finestra.after(120, anima)     # prossimo fotogramma tra 120 ms
+
+
+anima()
+```
+
+## 10 · Immagini scelte dall'utente
+
+Non tutte le immagini sono asset fissi: a volte è l'utente a sceglierle (la foto di un contatto, la copertina di un libro). Con `filedialog` si chiede il file e con Pillow lo si adatta allo spazio disponibile.
+
+```python
+# visualizzatore.py - aprire e mostrare un'immagine scelta dall'utente
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from PIL import Image, ImageTk
+
+finestra = tk.Tk()
+finestra.title("Visualizzatore")
+finestra.geometry("520x460")
+
+
+def apri():
+    percorso = filedialog.askopenfilename(
+        title="Scegli un'immagine",
+        filetypes=[("Immagini", "*.png *.jpg *.jpeg *.gif *.bmp *.webp"), ("Tutti", "*.*")],
+    )
+    if not percorso:
+        return                       # l'utente ha premuto Annulla
+    try:
+        img = Image.open(percorso)
+    except OSError:
+        messagebox.showerror("Errore", "Il file scelto non è un'immagine valida.")
+        return
+    img.thumbnail((500, 380))        # la faccio stare nella finestra
+    foto = ImageTk.PhotoImage(img)
+    quadro.config(image=foto, text="")
+    quadro.image = foto              # riferimento!
+    stato.config(text=f"{percorso}  ({img.width}x{img.height})")
+
+
+tk.Button(finestra, text="Apri immagine…", command=apri).pack(pady=8)
+quadro = tk.Label(finestra, text="Nessuna immagine", bg="#ddd", width=500, height=380)
+quadro.pack(padx=10)
+stato = tk.Label(finestra, text="", anchor="w")
+stato.pack(fill="x", padx=10, pady=4)
+
+finestra.mainloop()
+```
+
+<Aside type="note" title="Asset o file dell'utente?">
+Se l'immagine scelta deve restare nell'app anche dopo la chiusura (es. foto di un contatto in rubrica), **copiala** dentro una cartella del progetto con `shutil.copy(percorso, destinazione)` e salva nel tuo file JSON solo il **nome** del file, non il percorso completo del PC dell'utente.
+</Aside>
+
+## 11 · Altri tipi di asset
+
+Il principio dei percorsi (sezione 2) vale per **qualunque file**, non solo per le immagini.
+
+**File di dati** (domande di un quiz, livelli di un gioco, impostazioni):
+
+```python
+import json
+
+with open(ASSETS / "dati" / "domande.json", encoding="utf-8") as f:
+    domande = json.load(f)
+```
+
+**Suoni** (solo Windows, con il modulo `winsound` incluso in Python e file `.wav`):
+
+```python
+import winsound
+
+winsound.PlaySound(str(ASSETS / "suoni" / "click.wav"),
+                   winsound.SND_FILENAME | winsound.SND_ASYNC)   # ASYNC: non blocca la finestra
+```
+
+Per suoni che funzionino su tutti i sistemi operativi, o per musica di sottofondo in MP3/OGG, puoi usare la libreria esterna `pygame` (`pip install pygame`, poi il modulo `pygame.mixer`).
+
+## 12 · Asset e GitHub
+
+Gli asset fanno **parte del progetto** e vanno consegnati: se dimentichi la cartella `assets` nel repository, sul PC del professore il programma si blocca al primo `PhotoImage`.
+
+- Fai `git add assets` e controlla su GitHub che le immagini ci siano davvero.
+- Tieni i file leggeri: evita immagini da diversi MB (ridimensionale prima) e non caricare file enormi come video.
+- Non tenere asset che non usi più: fanno solo confusione.
+
+<Aside type="caution" title="Da dove prendi le immagini?">
+Non tutte le immagini trovate su internet si possono riusare liberamente. Preferisci immagini **disegnate da te** oppure prese da raccolte con licenza libera (Creative Commons, CC0, pubblico dominio) e **cita la fonte**, ad esempio in un file `CREDITS.txt` nella cartella `assets` o in una slide della presentazione.
+</Aside>
+
+## Errori comuni
+
+- **`couldn't open "...": no such file or directory`**: il percorso è relativo alla cartella di lavoro e non a quella dello script. Usa `Path(__file__).resolve().parent` (sezione 2). Controlla anche maiuscole/minuscole e l'estensione reale del file (`logo.png.png` capita spesso su Windows con le estensioni nascoste).
+- **`couldn't recognize data in image file`**: stai aprendo un JPEG (o un file rinominato in `.png` ma che in realtà è un altro formato) con `tk.PhotoImage`. Usa Pillow.
+- **`RuntimeError: Too early to create image`**: hai creato il `PhotoImage` prima di `tk.Tk()`.
+- **L'immagine non compare ma non ci sono errori**: manca il riferimento, Python l'ha cancellata (sezione 4).
+- **`ModuleNotFoundError: No module named 'PIL'`**: Pillow non è installata nell'ambiente virtuale attivo. Attiva il `.venv` e lancia `pip install pillow`. Attenzione: si installa come `pillow` ma si importa come `PIL`.
+- **L'immagine è enorme e copre tutta la finestra**: ridimensionala con `subsample` o con `thumbnail` di Pillow.
+- **Sul Canvas l'immagine è "tagliata" in alto a sinistra**: le coordinate di `create_image` indicano il centro; per gli sfondi usa `anchor="nw"`.
+
+## Da provare
+
+- Aggiungi un **logo** e un'**icona della finestra** alla [mini rubrica](/python-tps-quarte/tkinter/) della pagina introduttiva.
+- Crea un **lancio del dado** grafico: sei immagini `dado_1.png` … `dado_6.png` caricate in una lista, un pulsante "Lancia" che sceglie un numero con `random.randint` e cambia l'immagine della `Label`.
+- Costruisci una **galleria**: una `Listbox` con i nomi dei file della cartella `assets/immagini` (usa `IMMAGINI.glob("*.png")`) e una `Label` che mostra l'immagine selezionata.
+- Partendo dall'esempio dello sprite, aggiungi una **moneta** in una posizione casuale: quando il personaggio la tocca, la moneta si sposta altrove e il punteggio aumenta.

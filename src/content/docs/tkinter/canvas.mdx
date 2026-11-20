@@ -171,4 +171,4 @@ finestra.mainloop()
 - **Non si vede niente**: hai disegnato prima di chiamare `.pack()` (va bene comunque) ma forse hai usato un `bg` uguale al colore della forma, oppure le coordinate sono fuori dall'area.
 - **Il cerchio è un'ellisse**: in `create_oval` i due lati del rettangolo devono essere **uguali** per ottenere un cerchio perfetto.
 - **L'animazione va a scatti**: `after` troppo lungo o movimenti troppo grandi. Prova `after(16, ...)` (circa 60 fps) con spostamenti più piccoli.
-- **L'immagine sparisce**: come con `Label`, devi mantenere un **riferimento** al `PhotoImage`, altrimenti Python lo scarta.
+- **L'immagine sparisce**: come con `Label`, devi mantenere un **riferimento** al `PhotoImage`, altrimenti Python lo scarta. Vedi [Immagini e asset](/python-tps-quarte/tkinter/immagini/) per percorsi, sfondi e sprite.
